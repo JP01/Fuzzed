@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="OvywMk" name="FuzzFaceJUCE" projectType="audioplug" version="1.0.0"
+              bundleIdentifier="com.yourcompany.FuzzFaceJUCE" includeBinaryInAppConfig="1"
+              buildVST="1" buildVST3="0" buildAU="0" buildAUv3="0" buildRTAS="0"
+              buildAAX="0" pluginName="FuzzFaceJUCE" pluginDesc="FuzzFaceJUCE"
+              pluginManufacturer="yourcompany" pluginManufacturerCode="Manu"
+              pluginCode="Ovyw" pluginChannelConfigs="" pluginIsSynth="0" pluginWantsMidiIn="1"
+              pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
+              pluginAUExportPrefix="FuzzFaceJUCEAU" pluginRTASCategory="" aaxIdentifier="com.yourcompany.FuzzFaceJUCE"
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.2.3">
+  <MAINGROUP id="zynxBR" name="FuzzFaceJUCE">
+    <GROUP id="{8B1551AB-F701-C5C6-54D3-62D937EEF8A6}" name="Source">
+      <FILE id="ypLG1h" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="Vmcldh" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="lVM536" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="anY8Te" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+    <FILE id="STOSsh" name="Circuit.cpp" compile="1" resource="0" file="Source/Circuit.cpp"/>
+    <FILE id="CI72Li" name="Circuit.h" compile="0" resource="0" file="Source/Circuit.h"/>
+    <FILE id="bOpDTs" name="MyMatrixTypes.h" compile="0" resource="0" file="Source/MyMatrixTypes.h"/>
+    <FILE id="kJfekd" name="Simulation.cpp" compile="1" resource="0" file="Source/Simulation.cpp"/>
+    <FILE id="UJqkZ9" name="Simulation.h" compile="0" resource="0" file="Source/Simulation.h"/>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2015 targetFolder="Builds/VisualStudio2015" vstFolder="">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="FuzzFaceJUCE"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="FuzzFaceJUCE" headerPath="C:\Users\the_m\Desktop\Masters Project Docs\PluginCreation\Libraries\EigenLibraries"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE-grapefruit/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE-grapefruit/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2015>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+</JUCERPROJECT>
