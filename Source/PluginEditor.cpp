@@ -11,39 +11,93 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+//Define the ParameterSlider class and methods
+class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private Timer
+{
+	public:
+		ParameterSlider(AudioProcessorParameter& p) : Slider(p.getName(256)), param(p)
+		{
+			//Sets the range of the slider, min, max, increment
+			setRange(CTRL_MIN, CTRL_MAX, CTRL_INCREMENT);
+
+			//Start the timer with an interval of TIMER_FREQ hz, this is used to callBack
+			//and update the slider vals when params are changed in the host (eg automation)
+			startTimerHz(TIMER_FREQ);
+
+			//Updates the slider position
+			updateSliderPos();
+		}
+
+		//Calls the setValueNotifyingHost method when value is changed
+		//Allows the host/editor to modify the slider values
+		void valueChanged() override
+		{
+			param.setValueNotifyingHost((float)Slider::getValue());
+		}
+
+		//This method is called at regular intervals of TIMER_FREQ
+		void timerCallback() override { 
+			//update the slider position at regular intervals to ensure the UI matches 
+			//the param values
+			updateSliderPos(); 
+		}
+
+		//Calls the beginChangeGesture method to allow the host to know when a parameter is being held by user
+		void startedDragging() override { param.beginChangeGesture();	}
+		//Calls the endChangeGesture method to allow the host to know when a parameter has been let go by the user
+		void stoppedDragging() override { param.endChangeGesture(); }
+		
+		//gets the value from text and returns it as a double, used for typing param values
+		double getValueFromText(const String& text) override { return param.getValueForText(text); }
+
+		//returns the sliders current vallue as a string
+		String getTextFromValue(double value) override { return param.getText((float)value, 1024); }
+
+		//updates the slider position
+		void updateSliderPos()
+		{
+			//sets newValue as the current param value
+			const float newValue = param.getValue();
+
+			//If the param value does not match the slider value then update
+			if (newValue != (float)Slider::getValue() && !isMouseButtonDown())
+			{
+				Slider::setValue(newValue);
+			}
+		}
+		
+		AudioProcessorParameter& param; //declare a param object for referencing inside the class
+		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterSlider)
+};
 
 //==============================================================================
-FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor (FuzzFaceJuceAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceAudioProcessor& p)
+	: AudioProcessorEditor(&p), processor(p),
+	volLabel(String::empty, "Vol: "),
+	fuzzLabel(String::empty, "Fuzz: ")
 {
-    //Sets the default window size of the plugin
-    setSize (400, 300);
+	//Add the sliders to the editor
+	//Adds the Vol Slider
+	addAndMakeVisible(volSlider = new ParameterSlider(*p.volParam));
+	volSlider->setSliderStyle(Slider::Rotary);
 
-	//define the parameters of the fuzzControl slider object
-	fuzzControl.setSliderStyle(Slider::Rotary);  //creates a rotary object
-	fuzzControl.setRange(CTRL_MIN, CTRL_MAX, CTRL_INCREMENT);  //sets the min, max, and increment values for the rotary
-	fuzzControl.setTextBoxStyle(Slider::TextBoxBelow, false, 190, 20); //sets the textbox position, makes it editable, horizontal and vertical pixels
-	fuzzControl.setPopupDisplayEnabled(false, this);  //removes the popup display of current value
-	fuzzControl.setTextValueSuffix(" "); //adds a suffix to the end of the current setting
-	fuzzControl.setValue(FUZZ_DEFAULT);  //sets the default setting
+	//Adds the Fuzz Slider
+	addAndMakeVisible(fuzzSlider = new ParameterSlider(*p.fuzzParam));
+	fuzzSlider->setSliderStyle(Slider::Rotary);
 
-	//define the parameters of the volControl slider object
-	volControl.setSliderStyle(Slider::Rotary);  //creates a rotary object
-	volControl.setRange(CTRL_MIN, CTRL_MAX, CTRL_INCREMENT);  //sets the min, max, and increment values for the rotary
-	volControl.setTextBoxStyle(Slider::TextBoxBelow, false, 190, 20); //sets the textbox position, makes it editable, horizontal and vertical pixels
-	volControl.setPopupDisplayEnabled(false, this);  //removes the popup display of current value
-	volControl.setTextValueSuffix(" Vol"); //adds a suffix to the end of the current setting
-	volControl.setValue(VOL_DEFAULT);  //sets the default setting
-	
+	//Add labels to the sliders
+	volLabel.attachToComponent(volSlider, false);
+	volLabel.setFont(Font(11.0));
 
-	//Add the controls to the GUI
-	addAndMakeVisible(&fuzzControl);
-	addAndMakeVisible(&volControl);
+	fuzzLabel.attachToComponent(fuzzSlider, false);
+	fuzzLabel.setFont(Font(11.0));
 
-	//Add listeners to sliders
-	fuzzControl.addListener(this);
-	volControl.addListener(this);
-	
+	//The window should not be resizable
+	setResizable(false, false);
+
+	//sets the size to width, height
+	setSize(WIN_WIDTH, WIN_HEIGHT);
+
 }
 
 FuzzFaceJuceAudioProcessorEditor::~FuzzFaceJuceAudioProcessorEditor()
@@ -62,29 +116,10 @@ void FuzzFaceJuceAudioProcessorEditor::paint (Graphics& g)
 
 void FuzzFaceJuceAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
-	fuzzControl.setBounds(240, 100, 100, 100);
-	volControl.setBounds(60, 100, 100, 100);
+    //Layout and size of the sliders 
+	volSlider->setBounds(60, 100, 100, 100);
+	fuzzSlider->setBounds(240, 100, 100, 100);
+
 }
 
 //===========================================================
-void FuzzFaceJuceAudioProcessorEditor::sliderValueChanged(Slider* slider)
-{
-	//The idea for smoothing is that you Set the value when the slider is moved,
-	// but only getNextValue() in the processBlock
-
-
-	//sets the fuzzVal in the processor class 
-	processor.fuzzVal = fuzzControl.getValue();
-
-	//sets the volVal in the processor class 
-	processor.volVal = volControl.getValue();
-
-	std::ostringstream convert; 
-
-	convert << processor.smoothedFuzz;
-	actualFuzz = convert.str();
-	fuzzControl.setTextValueSuffix("   " + actualFuzz);
-}
-

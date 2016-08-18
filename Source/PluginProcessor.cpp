@@ -14,11 +14,13 @@
 
 //==============================================================================
 FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
+	  : volParam(nullptr),
+		fuzzParam(nullptr)
 {
-	//Initisalise the vals for smoothing later
-	fuzzVal = smoothedFuzz = FUZZ_DEFAULT;
-	volVal = smoothedVol = VOL_DEFAULT;
-	smoothingCoeff = exp(-2.0 * M_PI * smoothingCutoff / currentSampleRate);
+	//Create the parameters 
+	addParameter(volParam = new AudioParameterFloat("vol", "Vol", CTRL_MIN, CTRL_MAX, VOL_DEFAULT));
+	addParameter(fuzzParam = new AudioParameterFloat("fuzz", "Fuzz", CTRL_MIN, CTRL_MAX, FUZZ_DEFAULT));
+
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -118,20 +120,24 @@ bool FuzzFaceJuceAudioProcessor::setPreferredBusArrangement (bool isInput, int b
 
 void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+	
 	//If the sampleRate has changes then update the sim samplerate
 	if (currentSampleRate != getSampleRate()) {
 		currentSampleRate = getSampleRate();
 		sim.setSimSampleRate(currentSampleRate);
-		smoothingCoeff = exp(-2.0 * M_PI * smoothingCutoff / currentSampleRate);
 	}
+
+	//Set the paramvalues
+	volVal = *volParam;
+	fuzzVal = *fuzzParam;
+
+	sim.setVol(volVal);
+	sim.setFuzz(fuzzVal);
+
+
 
 	const int totalNumInputChannels = getTotalNumInputChannels();
 	const int totalNumOutputChannels = getTotalNumOutputChannels();
-	
-	smoothedFuzz = fuzzVal + smoothingCoeff*(smoothedFuzz - fuzzVal);
-	sim.setFuzz(smoothedFuzz);
-        
-	sim.setVol(volVal);
 
 	// In case we have more outputs than inputs, this code clears any output
 	// channels that didn't contain input data, (because these aren't
@@ -141,10 +147,6 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	// this code if your algorithm always overwrites all the output channels.
 	for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
 		buffer.clear(i, 0, buffer.getNumSamples());
-
-
-	// This is the place where you'd normally do the guts of your plugin's
-   // audio processing...
 
 
    //Set channel to 0 as the plugin is MONO
@@ -161,7 +163,7 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		eigenInputBuffer(index) = buffer.getSample(channel, index);
 	}
 
-	/*Process*/
+	//Process
 	//Scale the buffer for input to system
 	eigenInputBuffer *= 0.1;
 
@@ -182,6 +184,7 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		}
 	}
 
+	
 }
     
 
@@ -202,16 +205,34 @@ AudioProcessorEditor* FuzzFaceJuceAudioProcessor::createEditor()
 //==============================================================================
 void FuzzFaceJuceAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    //Create an XML element to store the parameter values
+	XmlElement xml("FUZZFACESETTINGS");
+
+	// Store the values of all our parameters, using their param ID as the XML attribute
+	for (int i = 0; i < getNumParameters(); ++i)
+		if (AudioProcessorParameterWithID* p = dynamic_cast<AudioProcessorParameterWithID*> (getParameters().getUnchecked(i)))
+			xml.setAttribute(p->paramID, p->getValue());
+
+	// then use this helper function to stuff it into the binary blob and return it..
+	copyXmlToBinary(xml, destData);
 }
 
 void FuzzFaceJuceAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-	
+	// This getXmlFromBinary() helper function retrieves our XML from the binary blob..
+	ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+	if (xmlState != nullptr)
+	{
+		// make sure that it's actually our type of XML object..
+		if (xmlState->hasTagName("MYPLUGINSETTINGS"))
+		{
+			// reload the parameters
+			for (int i = 0; i < getNumParameters(); ++i)
+				if (AudioProcessorParameterWithID* p = dynamic_cast<AudioProcessorParameterWithID*> (getParameters().getUnchecked(i)))
+					p->setValueNotifyingHost((float)xmlState->getDoubleAttribute(p->paramID, p->getValue()));
+		}
+	}
 }
 
 //==============================================================================

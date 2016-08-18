@@ -14,6 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Simulation.h"
 
+
 //==============================================================================
 /**
 */
@@ -28,23 +29,13 @@ public:
 	//Instance of the simulation class
 	Simulation sim;
 
-	//Value for fuzz
-	double fuzzVal;
-	//smoothed fuzz value
-	double smoothedFuzz;
-
-	//Value for Vol
-	double volVal;
-	//smoothed volume value
-	double smoothedVol; 
-
-	
+	//Parameters
+	AudioParameterFloat* volParam;
+	AudioParameterFloat* fuzzParam;
+	double volVal, fuzzVal;
 	//value for currentSampleRate
 	double currentSampleRate = DEFAULT_SR;
 
-	//smoothing time
-	double smoothingCoeff = 0.9;
-	double smoothingCutoff = 40;
 
 	//Eigen Vector storing current buffer
 	Eigen::VectorXd eigenInputBuffer;
@@ -86,6 +77,9 @@ public:
 
 	//==============================================================================
 	
+
+
+
 
 private:
     //==============================================================================

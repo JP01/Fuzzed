@@ -18,14 +18,18 @@
 #define CTRL_INCREMENT 0.01 //The increment of the control knobs
 #define CTRL_MIN 0.01
 #define CTRL_MAX 0.99
+#define TIMER_FREQ 30
 
 #define FUZZ_DEFAULT 0.6
 #define VOL_DEFAULT 0.4
 
+#define WIN_WIDTH 400
+#define WIN_HEIGHT 200
+
 //==============================================================================
 /**
 */
-class FuzzFaceJuceAudioProcessorEditor  : public AudioProcessorEditor, private Slider::Listener
+class FuzzFaceJuceAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     FuzzFaceJuceAudioProcessorEditor (FuzzFaceJuceAudioProcessor&);
@@ -34,22 +38,19 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-
+	
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    FuzzFaceJuceAudioProcessor& processor;
+	class ParameterSlider; //class for controlling parameters
 
-	Slider fuzzControl; //slider for controlling fuzz
-	Slider volControl; //slider for controlling vol
+	Label volLabel, fuzzLabel; //Labels for the fuzz and vol params
 
-	String actualFuzz; //string showing actual value of fuzz
-	String actualVol; //string for showing the actual value of vol
-
-	void sliderValueChanged(Slider* slider) override; //method which changes fuzzVal or volVal when slider changes
-
-	class ParameterSlider;
+	//Creates pointers for volSlider and fuzzSlider which are automatically deleted once out of scope
+	ScopedPointer<ParameterSlider> volSlider, fuzzSlider; 
+	
+	// This reference is provided as a quick way for your editor to
+	// access the processor object that created it.
+	FuzzFaceJuceAudioProcessor& processor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FuzzFaceJuceAudioProcessorEditor)
 };
