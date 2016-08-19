@@ -13,7 +13,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include <sstream>
 
 #define CTRL_INCREMENT 0.01 //The increment of the control knobs
 #define CTRL_MIN 0.01

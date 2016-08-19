@@ -11,6 +11,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+//Create the plugin instance
+AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 
 //==============================================================================
 FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
@@ -126,15 +128,11 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		currentSampleRate = getSampleRate();
 		sim.setSimSampleRate(currentSampleRate);
 	}
-
 	//Set the paramvalues
 	volVal = *volParam;
 	fuzzVal = *fuzzParam;
-
 	sim.setVol(volVal);
 	sim.setFuzz(fuzzVal);
-
-
 
 	const int totalNumInputChannels = getTotalNumInputChannels();
 	const int totalNumOutputChannels = getTotalNumOutputChannels();
@@ -183,13 +181,8 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 			*channelData = eigenOutputBuffer(index);
 		}
 	}
-
-	
 }
-    
-
-
-
+   
 
 //==============================================================================
 bool FuzzFaceJuceAudioProcessor::hasEditor() const

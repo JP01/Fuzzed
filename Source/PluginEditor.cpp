@@ -39,7 +39,7 @@ class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private
 		void timerCallback() override { 
 			//update the slider position at regular intervals to ensure the UI matches 
 			//the param values
-			updateSliderPos(); 
+			updateSliderPos(); 			
 		}
 
 		//Calls the beginChangeGesture method to allow the host to know when a parameter is being held by user
