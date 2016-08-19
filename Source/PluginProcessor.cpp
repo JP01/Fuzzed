@@ -162,7 +162,7 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	}
 
 	//Process
-	//Scale the buffer for input to system
+	//Scale the buffer for input to system so that the maximum input to the system is 0.1
 	eigenInputBuffer *= 0.1;
 
 	//process the scaled data

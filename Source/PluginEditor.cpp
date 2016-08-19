@@ -79,18 +79,25 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	//Add the sliders to the editor
 	//Adds the Vol Slider
 	addAndMakeVisible(volSlider = new ParameterSlider(*p.volParam));
+	//Set the slider as a rotary
 	volSlider->setSliderStyle(Slider::Rotary);
+	//Sets the textbox below, editable, width and height
+	volSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
 
 	//Adds the Fuzz Slider
 	addAndMakeVisible(fuzzSlider = new ParameterSlider(*p.fuzzParam));
+	//Set the slider as a rotary
 	fuzzSlider->setSliderStyle(Slider::Rotary);
+	//Sets the textbox below, editable, width and height
+	fuzzSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
+	
 
 	//Add labels to the sliders
 	volLabel.attachToComponent(volSlider, false);
-	volLabel.setFont(Font(11.0));
+	volLabel.setFont(Font(16.0));
 
 	fuzzLabel.attachToComponent(fuzzSlider, false);
-	fuzzLabel.setFont(Font(11.0));
+	fuzzLabel.setFont(Font(16.0));
 
 	//The window should not be resizable
 	setResizable(false, false);
@@ -117,8 +124,8 @@ void FuzzFaceJuceAudioProcessorEditor::paint (Graphics& g)
 void FuzzFaceJuceAudioProcessorEditor::resized()
 {
     //Layout and size of the sliders 
-	volSlider->setBounds(60, 100, 100, 100);
-	fuzzSlider->setBounds(240, 100, 100, 100);
+	volSlider->setBounds(60, 50, 120, 120);
+	fuzzSlider->setBounds(220, 50, 120, 120);
 
 }
 

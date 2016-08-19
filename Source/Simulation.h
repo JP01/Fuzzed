@@ -8,7 +8,7 @@
 /* PI */
 #define PI 3.14159265358979323846 //- extra digits of precision
 
-#define DEFAULT_VCC 9.  // default value for the voltage power supply
+#define DEFAULT_VCC 8.1  // default value for the voltage power supply, 90% of 9v = 8.1v for more realism
 #define ZERO_INPUT 0.  // zero input used for getting the system to steady state
 #define DURFADE 0.1    //duration of the faded power supply used for steady state
 #define STEADY_STATE_FACTOR 2.  //Factor which controls the size of the window window used to reach steady state (where window size in samples = MM*steadyStateFactor)
