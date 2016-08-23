@@ -21,13 +21,16 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 		gainParam(nullptr)
 {
 	//Create the parameters 
+	addParameter(gainParam = new AudioParameterFloat("gain", "Gain", GAIN_MIN, GAIN_MAX, GAIN_DEFAULT));
 	addParameter(volParam = new AudioParameterFloat("vol", "Vol", CTRL_MIN, CTRL_MAX, VOL_DEFAULT));
 	addParameter(fuzzParam = new AudioParameterFloat("fuzz", "Fuzz", CTRL_MIN, CTRL_MAX, FUZZ_DEFAULT));
-	addParameter(gainParam = new AudioParameterFloat("gain", "Gain", 0.0, 1.0, 0.5));
+	
 	//Sets the volVal and fuzzVal to defaults
+	gainVal = pow(10, (GAIN_DEFAULT/10)); //in dB
 	volVal = VOL_DEFAULT;
 	fuzzVal = FUZZ_DEFAULT;
-	
+	//Sets the frequency for the timerCallback method to 1ms
+	startTimerHz(P_TIMER_FREQ);
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -145,26 +148,22 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		buffer.clear(i, 0, buffer.getNumSamples());
 
 
-
 	//If the sampleRate has changes then update the sim samplerate
 	if (currentSampleRate != getSampleRate()) {
 		currentSampleRate = getSampleRate();
 		sim.setSimSampleRate(currentSampleRate);
 	}
 
+	//Check if the gainVal matches the parameter and update
+	if (gainVal = pow(10, (*gainParam / 10))) {
+		//Apply the input gain
+		buffer.applyGain(gainVal);
+	}
+
 
 	//Process		
 	for (int index = 0; index < buffer.getNumSamples(); ++index)
-	{
-		//Check if params have changed
-		if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
-			//Set the paramvalues	
-			volVal = *volParam;
-			fuzzVal = *fuzzParam;
-			//Refresh the sim
-			sim.setParams(fuzzVal, volVal);
-		}
-
+	{	
 		//get the pointer to the channel data at the index
 		float* channelData = buffer.getWritePointer(channel, index);
 		//Scale the data for processing
@@ -174,6 +173,32 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	}
 	
 
+}
+
+//Call this method at P_TIMER_FREQ hz to update the circuit param vals
+void FuzzFaceJuceAudioProcessor::timerCallback() 
+{
+	//Set the gainVal to the value from the slider in dB
+	gainVal = pow(10,(*gainParam/10));
+
+	//Check if fuzz or vol params have changed
+	if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
+		//Set the new target value
+		volVal = smooth(*volParam);
+		fuzzVal = smooth(*fuzzParam);			
+		
+		//Refresh the sim
+		sim.setParams(fuzzVal, volVal);
+	}
+
+
+
+
+}
+
+double FuzzFaceJuceAudioProcessor::smooth(double input) {
+	volVal = SMOOTH_COEFF * (volVal - input) + input;
+	return volVal;
 }
 
 

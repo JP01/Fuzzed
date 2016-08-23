@@ -6,17 +6,31 @@ namespace constants {
 	const double CTRL_INCREMENT = 0.001; //The increment of the control knobs
 	const double CTRL_MIN = 0;
 	const double CTRL_MAX = 1;
+	const double SMOOTH_COEFF = 0.9995;
 
-	//timer freq for the UI updater
-	const int TIMER_FREQ = 30;
+	//Constrols the min and max input gain vals
+	const double GAIN_INCREMENT = 0.01;
+	const double GAIN_MIN = -12; //in db
+	const double GAIN_MAX = 6; //in db
+
+
+	//timer freq for the UI updater in hz
+	const int UI_TIMER_FREQ = 30;
+	//timer freq for the param updater in hz
+	const int P_TIMER_FREQ = 1000;
 
 	//Defaults for the parameters
+	const double GAIN_DEFAULT = 0;
 	const double FUZZ_DEFAULT = 0.6;
 	const double VOL_DEFAULT = 0.4;
 
 	//Window size of plugin
 	const int WIN_WIDTH = 600;
 	const int WIN_HEIGHT = 200;
+
+	const int KNOB_WIDTH = 90;
+	const int KNOB_HEIGHT = 90;
+
 
 	/* PI */
 	const double PI = 3.14159265358979323846; //- extra digits of precision

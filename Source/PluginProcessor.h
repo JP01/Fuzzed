@@ -18,7 +18,7 @@
 //==============================================================================
 /**
 */
-class FuzzFaceJuceAudioProcessor  : public AudioProcessor
+class FuzzFaceJuceAudioProcessor  : public AudioProcessor, private Timer
 {
 public:
     //==============================================================================
@@ -34,9 +34,14 @@ public:
 	AudioParameterFloat* fuzzParam;
 	AudioParameterFloat* gainParam;
 
-	double volVal, fuzzVal;
+	double volVal, fuzzVal, gainVal;
+
 	//value for currentSampleRate
 	double currentSampleRate = DEFAULT_SR;
+
+	//Param smoothing
+	double smooth(double input);
+
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -76,6 +81,9 @@ public:
 	
 
 private:
+
+	void timerCallback() override;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FuzzFaceJuceAudioProcessor)
 
