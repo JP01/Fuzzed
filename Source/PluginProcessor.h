@@ -32,15 +32,11 @@ public:
 	//Parameters
 	AudioParameterFloat* volParam;
 	AudioParameterFloat* fuzzParam;
+	AudioParameterFloat* gainParam;
+
 	double volVal, fuzzVal;
 	//value for currentSampleRate
 	double currentSampleRate = DEFAULT_SR;
-
-
-	//Eigen Vector storing current buffer
-	Eigen::VectorXd eigenInputBuffer;
-	Eigen::VectorXd eigenOutputBuffer;
-
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -51,6 +47,7 @@ public:
    #endif
 
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
+
 
     //==============================================================================
     AudioProcessorEditor* createEditor() override;

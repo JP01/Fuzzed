@@ -17,12 +17,13 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 //==============================================================================
 FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 	  : volParam(nullptr),
-		fuzzParam(nullptr)
+		fuzzParam(nullptr),
+		gainParam(nullptr)
 {
 	//Create the parameters 
 	addParameter(volParam = new AudioParameterFloat("vol", "Vol", CTRL_MIN, CTRL_MAX, VOL_DEFAULT));
 	addParameter(fuzzParam = new AudioParameterFloat("fuzz", "Fuzz", CTRL_MIN, CTRL_MAX, FUZZ_DEFAULT));
-
+	addParameter(gainParam = new AudioParameterFloat("gain", "Gain", 0.0, 1.0, 0.5));
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -120,20 +121,10 @@ bool FuzzFaceJuceAudioProcessor::setPreferredBusArrangement (bool isInput, int b
 }
 #endif
 
+
 void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-	
-	//If the sampleRate has changes then update the sim samplerate
-	if (currentSampleRate != getSampleRate()) {
-		currentSampleRate = getSampleRate();
-		sim.setSimSampleRate(currentSampleRate);
-	}
-	//Set the paramvalues
-	volVal = *volParam;
-	fuzzVal = *fuzzParam;
-	sim.setVol(volVal);
-	sim.setFuzz(fuzzVal);
-
+	//Declare the consts for number of channels
 	const int totalNumInputChannels = getTotalNumInputChannels();
 	const int totalNumOutputChannels = getTotalNumOutputChannels();
 
@@ -143,46 +134,42 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	// This is here to avoid people getting screaming feedback
 	// when they first compile a plugin, but obviously you don't need to keep
 	// this code if your algorithm always overwrites all the output channels.
-	for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+	for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i) 
 		buffer.clear(i, 0, buffer.getNumSamples());
 
 
-   //Set channel to 0 as the plugin is MONO
-	int channel = 0;
 
-	//Resize the eigenBuffers to store all the samples
-	eigenInputBuffer.resize(buffer.getNumSamples());
-	eigenOutputBuffer.resize(buffer.getNumSamples());
-
-	//Fill the input buffer
-	for (int index = 0; index < buffer.getNumSamples(); ++index)
-	{
-		//Fill the input buffer with sample at corresponding channel and index
-		eigenInputBuffer(index) = buffer.getSample(channel, index);
+	//If the sampleRate has changes then update the sim samplerate
+	if (currentSampleRate != getSampleRate()) {
+		currentSampleRate = getSampleRate();
+		sim.setSimSampleRate(currentSampleRate);
 	}
 
-	//Process
-	//Scale the buffer for input to system so that the maximum input to the system is 0.1
-	eigenInputBuffer *= 0.1;
 
-	//process the scaled data
-	eigenOutputBuffer = sim.processBuffer(eigenInputBuffer);
-
-	//scale the buffer for output to system
-	eigenOutputBuffer *= 2;
-
-	//For each output channel write the output data
-	for (channel = 0; channel < totalNumOutputChannels; ++channel) {
-		//write the data
+	//Check if params have changed
+	if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
+		//Set the paramvalues	
+		volVal = *volParam;
+		fuzzVal = *fuzzParam;
+		sim.setParams(fuzzVal, volVal);
+	}
+	
+	//Process	
+	for (int channel = 0; channel < totalNumInputChannels; ++channel) {
 		for (int index = 0; index < buffer.getNumSamples(); ++index)
 		{
 			//get the pointer to the channel data at the index
 			float* channelData = buffer.getWritePointer(channel, index);
-			*channelData = eigenOutputBuffer(index);
+			//Scale the data for processing
+			*channelData *= 0.05;
+			//process the data
+			sim.processSample(channelData, DEFAULT_VCC);
+
 		}
 	}
+
 }
-   
+
 
 //==============================================================================
 bool FuzzFaceJuceAudioProcessor::hasEditor() const
@@ -218,7 +205,7 @@ void FuzzFaceJuceAudioProcessor::setStateInformation (const void* data, int size
 	if (xmlState != nullptr)
 	{
 		// make sure that it's actually our type of XML object..
-		if (xmlState->hasTagName("MYPLUGINSETTINGS"))
+		if (xmlState->hasTagName("FUZZFACESETTINGS"))
 		{
 			// reload the parameters
 			for (int i = 0; i < getNumParameters(); ++i)

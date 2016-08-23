@@ -5,17 +5,6 @@
 #include <vector>
 #include <ctime>
 
-/* PI */
-#define PI 3.14159265358979323846 //- extra digits of precision
-
-#define DEFAULT_VCC 8.1  // default value for the voltage power supply, 90% of 9v = 8.1v for more realism
-#define ZERO_INPUT 0.  // zero input used for getting the system to steady state
-#define DURFADE 0.1    //duration of the faded power supply used for steady state
-#define STEADY_STATE_FACTOR 2.  //Factor which controls the size of the window window used to reach steady state (where window size in samples = MM*steadyStateFactor)
-#define MAX_ITERATIONS 100  //Maximum number of iterations for the newton raphson solver
-#define MAX_SUB_ITERATIONS 10  //maximum number of subiterations for the damped newton raphson solver
-#define TOL 1e-10  //error tolerance of the system
-
 
 class Simulation : public Circuit
 {
@@ -29,33 +18,27 @@ public:
 	//Default Destructor
 	~Simulation();
 
-	//Refresh all the circuit values and setup the statespace matrices used in the simulation
-	void refreshAll();
-
 	//process the buffer of data where vcc is set to the system VCC (default 9v)
-	Eigen::VectorXd processBuffer(Eigen::VectorXd inputBuffer);
+	//Eigen::VectorXd processBuffer(Eigen::VectorXd inputBuffer);
 
 	//Buffer to store the output vector of the simulation to send to the audio channel
-	Eigen::VectorXd outputBuffer;
+	//Eigen::VectorXd outputBuffer;
 
 	//Set the sampleRate
 	void setSimSampleRate(double _sampleRate);
-	
-	//IPlug parameter smoothing
-	class CParamSmooth
-	{
-	public:
-		
-		CParamSmooth() { a = 0.99; b = 1. - a; z = 0.; };
-		~CParamSmooth() {};
-		double Process(double in) { z = (in * b) + (z * a); return z; }
-	private: 
-		double a, b, z;
-	};
 
+	//Takes the current sample as an arguement along with vcc and processes it, returning the new data.
+	//channelData is used as the name to be implemented with JUCE API channelData variable name
+	void processSample(float* channelData, double _vcc);
+
+
+	//Method to set the fuzz and vol params to the arguement vals and then refresh the system.
+	void setParams(double _fuzzVal, double _volVal);
 
 
 private:
+	//Refresh all the circuit values and setup the statespace matrices used in the simulation
+	void refreshAll();
 
 	//Buffer size in samples, defaulted to...??
 	int bufferSize;
@@ -64,13 +47,13 @@ private:
 	void getSteadyState();
 
 	//zero input used as signal for warmup phase / getSteadyState
-	const double zeroInput = ZERO_INPUT;
+	float* zeroInput;
 
 	/* Input */
 	//VCC voltage
 	double vcc = DEFAULT_VCC; //steady state voltage
 	const double durfade = DURFADE; //duration of the faded power up
-	double MM; //integer rounded value used during the powerup phase
+	int MM; //integer rounded value used during the powerup phase
 	const double steadyStatePeriodFactor = STEADY_STATE_FACTOR; //Factor which controls the size of the window window used to reach steady state (where window size in samples = MM*steadyStateFactor)
 
 	Eigen::VectorXd win; //hanning window
@@ -131,12 +114,8 @@ private:
 
 	Eigen::Vector4d calcTemp; //temporary term used in simulation calculation (MATLAB - TERM)
 
-	//initialise and zero all the simulation paramaters and vectors
+							  //initialise and zero all the simulation paramaters and vectors
 	void initialiseSimulationParameters();
-
-	//Takes the current sample as an arguement along with vcc and processes it, returning the new data.
-	//channelData is used as the name to be implemented with JUCE API channelData variable name
-	double processSample(double channelData, double _vcc);
 
 	//Eigen::Vector2d outputVector;
 	double output; //output of the model (MATLAB - y)

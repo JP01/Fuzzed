@@ -66,6 +66,7 @@ class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private
 			}
 		}
 		
+	
 		AudioProcessorParameter& param; //declare a param object for referencing inside the class
 		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterSlider)
 };
@@ -74,7 +75,8 @@ class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private
 FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceAudioProcessor& p)
 	: AudioProcessorEditor(&p), processor(p),
 	volLabel(String::empty, "Vol: "),
-	fuzzLabel(String::empty, "Fuzz: ")
+	fuzzLabel(String::empty, "Fuzz: "),
+	gainLabel(String::empty, "Input Gain: ")
 {
 	//Add the sliders to the editor
 	//Adds the Vol Slider
@@ -91,13 +93,23 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	//Sets the textbox below, editable, width and height
 	fuzzSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
 	
+	//Adds the input gain slider
+	addAndMakeVisible(gainSlider = new ParameterSlider(*p.gainParam));
+	//Set the slider as a rotary
+	gainSlider->setSliderStyle(Slider::Rotary);
+	//Sets the textbox Below, editable, width and height
+	gainSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
 
+	
 	//Add labels to the sliders
 	volLabel.attachToComponent(volSlider, false);
 	volLabel.setFont(Font(16.0));
 
 	fuzzLabel.attachToComponent(fuzzSlider, false);
 	fuzzLabel.setFont(Font(16.0));
+
+	gainLabel.attachToComponent(gainSlider, false);
+	gainLabel.setFont(Font(16.0));
 
 	//The window should not be resizable
 	setResizable(false, false);
@@ -124,8 +136,9 @@ void FuzzFaceJuceAudioProcessorEditor::paint (Graphics& g)
 void FuzzFaceJuceAudioProcessorEditor::resized()
 {
     //Layout and size of the sliders 
-	volSlider->setBounds(60, 50, 120, 120);
-	fuzzSlider->setBounds(220, 50, 120, 120);
+	volSlider->setBounds(260, 50, 120, 120);
+	fuzzSlider->setBounds(420, 50, 120, 120);
+	gainSlider->setBounds(60, 50, 120, 120);
 
 }
 

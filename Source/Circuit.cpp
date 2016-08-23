@@ -167,25 +167,6 @@ void Circuit::refreshNonLinStateSpace() {
 	stateSpaceK = -padNL*systemMatrix.partialPivLu().solve(padNL.transpose()); //populate
 }
 
-//Return the specified state space matrix, takes capital letters only A-K
-Eigen::MatrixXd Circuit::getStateSpaceMatrix(std::string input) {
-
-	if (input == "A") { return stateSpaceA; }
-	if (input == "B") { return stateSpaceB; }
-	if (input == "C") { return stateSpaceC; }
-	if (input == "D") { return stateSpaceD; }
-	if (input == "E") { return stateSpaceE; }
-	if (input == "F") { return stateSpaceF; }
-	if (input == "G") { return stateSpaceG; }
-	if (input == "H") { return stateSpaceH; }
-	if (input == "K") { return stateSpaceK; }
-	else {
-		std::cout << "Input \"" << input << "\" not recognised, defaulted output is matrix A";
-		return stateSpaceA;
-	}
-
-}
-
 /* Function used to refresh the nonlinear function matrices, called by refresh() */
 void Circuit::refreshNonlinearFunctions() {
 	//Input the psi values
@@ -207,28 +188,25 @@ void Circuit::refreshNonlinearFunctions() {
 	nonLinEquationMatrix = alteredStateSpaceK.inverse()*phi.inverse();
 }
 
-//Return the specified nonlinear function matrix
-Eigen::MatrixXd Circuit::getNonlinearFunctionMatrix(std::string input) {
-	if (input == "psi") { return psi; }
-	if (input == "phi") { return phi; }
-	if (input == "nonLinEquationMatrix") { return nonLinEquationMatrix; }
-	if (input == "alteredStateSpaceK") { return alteredStateSpaceK; }
-	else {
-		std::cout << "Input \"" << input << "\" not recognised, defaulted output is matrix PSI" << std::endl;
-		return psi;
-	}
-}
-
-/* Create a setter for the Fuzz parameter, when input is outside the allowable range 0 > fuzzVal > 1, default to 0.6 */
+/* Create a setter for the Fuzz parameter, when input is outside the allowable range 0 > fuzzVal > 1 */
 void Circuit::setFuzz(double _fuzz) {
 	//Checks fuzzVal is within allowable range
-	if (_fuzz > 0 && _fuzz < 1) {
+	if (_fuzz >= CTRL_MAX) 
+	{
+		//Defaults value to MAX - INCREMENT and prints a message
+		std::cout << "Fuzz greater than range, defaulted to " << CTRL_MAX - CTRL_INCREMENT << std::endl;
+		fuzz = CTRL_MAX - CTRL_INCREMENT;
+	} 
+	else if (_fuzz <= CTRL_MIN)
+	{
+		//Defaults value to Min and prints a message
+		std::cout << "Fuzz less than range, defaulted to " << CTRL_MIN + CTRL_INCREMENT << std::endl;
+		fuzz = CTRL_MIN + CTRL_INCREMENT;
+	} 	
+	else
+	{
+		//0 <_fuzz < 1 set fuzz to the arguement
 		fuzz = _fuzz;
-	}
-	else {
-		//Defaults value to 0.6 and prints a message
-		std::cout << "Fuzz out of range, defaulted to " << defaultFuzz << std::endl;
-		fuzz = defaultFuzz;
 	}
 }
 
@@ -241,13 +219,22 @@ double Circuit::getFuzz()
 /* Create a setter for the Vol parameter, when input is outside the allowable range 0 > volVal > 1, default to 0.4 */
 void Circuit::setVol(double _vol) {
 	//Checks volVal is within allowable range
-	if (_vol > 0 && _vol < 1) {
-		vol = _vol;
+	if (_vol >= CTRL_MAX)
+	{
+		//Defaults value to MAX - INCREMENT and prints a message
+		std::cout << "Vol greater than range, defaulted to " << CTRL_MAX - CTRL_INCREMENT << std::endl;
+		vol = CTRL_MAX - CTRL_INCREMENT;
 	}
-	else {
-		//Defaults value to 0.4 and prints a message
-		std::cout << "Vol out of range, defaulted to " << defaultVol << std::endl;
-		vol = defaultVol;
+	else if (_vol <= CTRL_MIN)
+	{
+		//Defaults value to Min + Increment and prints a message
+		std::cout << "Vol less than range, defaulted to " << CTRL_MIN + CTRL_INCREMENT << std::endl;
+		vol = CTRL_MIN + CTRL_INCREMENT;
+	}
+	else
+	{
+		//0 <_vol < 1 set fuzz to the arguement
+		vol = _vol;
 	}
 }
 
@@ -255,6 +242,12 @@ void Circuit::setVol(double _vol) {
 double Circuit::getVol()
 {
 	return vol;
+}
+
+//Method to set the fuzz and vol params to the arguement vals and then refresh the system.
+void Circuit::setParams(double _fuzzVal, double _volVal) {
+	setFuzz(_fuzzVal);
+	setVol(_volVal);
 }
 
 /* Returns the circuit saturation current IS */
@@ -280,6 +273,42 @@ void Circuit::setCircuitSampleRate(double _sampleRate)
 double Circuit::getCircuitSampleRate() {
 	return sampleRate;
 }
+
+
+
+//Return the specified nonlinear function matrix
+Eigen::MatrixXd Circuit::getNonlinearFunctionMatrix(std::string input) {
+	if (input == "psi") { return psi; }
+	if (input == "phi") { return phi; }
+	if (input == "nonLinEquationMatrix") { return nonLinEquationMatrix; }
+	if (input == "alteredStateSpaceK") { return alteredStateSpaceK; }
+	else {
+		std::cout << "Input \"" << input << "\" not recognised, defaulted output is matrix PSI" << std::endl;
+		return psi;
+	}
+}
+
+
+//Return the specified state space matrix, takes capital letters only A-K
+Eigen::MatrixXd Circuit::getStateSpaceMatrix(std::string input) {
+
+	if (input == "A") { return stateSpaceA; }
+	if (input == "B") { return stateSpaceB; }
+	if (input == "C") { return stateSpaceC; }
+	if (input == "D") { return stateSpaceD; }
+	if (input == "E") { return stateSpaceE; }
+	if (input == "F") { return stateSpaceF; }
+	if (input == "G") { return stateSpaceG; }
+	if (input == "H") { return stateSpaceH; }
+	if (input == "K") { return stateSpaceK; }
+	else {
+		std::cout << "Input \"" << input << "\" not recognised, defaulted output is matrix A";
+		return stateSpaceA;
+	}
+
+}
+
+
 
 /*Default Destructor */
 Circuit::~Circuit() {

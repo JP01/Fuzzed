@@ -14,16 +14,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 
-#define CTRL_INCREMENT 0.01 //The increment of the control knobs
-#define CTRL_MIN 0.01
-#define CTRL_MAX 0.99
-#define TIMER_FREQ 30
-
-#define FUZZ_DEFAULT 0.6
-#define VOL_DEFAULT 0.4
-
-#define WIN_WIDTH 400
-#define WIN_HEIGHT 200
 
 //==============================================================================
 /**
@@ -42,11 +32,14 @@ public:
 private:
 	class ParameterSlider; //class for controlling parameters
 
-	Label volLabel, fuzzLabel; //Labels for the fuzz and vol params
-
-	//Creates pointers for volSlider and fuzzSlider which are automatically deleted once out of scope
-	ScopedPointer<ParameterSlider> volSlider, fuzzSlider; 
+	Label volLabel, fuzzLabel, gainLabel; //Labels for the fuzz and vol params + gainLabel
 	
+	//Creates pointers for volSlider and fuzzSlider which are automatically deleted once out of scope + gainSlider
+	ScopedPointer<ParameterSlider> volSlider, fuzzSlider, gainSlider; 
+	
+
+
+
 	// This reference is provided as a quick way for your editor to
 	// access the processor object that created it.
 	FuzzFaceJuceAudioProcessor& processor;

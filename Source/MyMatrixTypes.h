@@ -9,8 +9,8 @@ const int numInputs = 2;  //Number of inputs
 const int numNonLin = 4; //Number of nonlinearities
 const int numOutputs = 1; //Number of outputs
 
-/*Define the matrix types for use throughout the Circuit class, predefined to reduce use of Eigen::Dynamic */
-//Circuit and System matrices
+						  /*Define the matrix types for use throughout the Circuit class, predefined to reduce use of Eigen::Dynamic */
+						  //Circuit and System matrices
 typedef Eigen::Matrix<double, numOutputs, numRes> ResMatrix; //used for resistor
 typedef Eigen::Matrix<double, numRes, numRes> DiagRes;       // used for diagonal resistor matrix
 typedef Eigen::Matrix<double, numOutputs, numCap> CapMatrix; //used for capacitor
@@ -25,13 +25,13 @@ typedef Eigen::Matrix<double, numInputs, numNodes> IncidentVoltage; //used for t
 typedef Eigen::Matrix<double, numNonLin, numNodes> IncidentNonLin; //used for the incident nonlinearity matrix
 typedef Eigen::Matrix<double, numOutputs, numNodes> IncidentOutput; //used for the incident output matrix
 
-//Padded matrices for calculation of state space matrices
+																	//Padded matrices for calculation of state space matrices
 typedef Eigen::Matrix<double, numCap, numNodes + numInputs> PaddedCap; //used for padded cap matrix in state space calcultions
 typedef Eigen::Matrix<double, numNonLin, numNodes + numInputs> PaddedNonLin; //used for padded NonLin matrix in state space calcultions
 typedef Eigen::Matrix<double, numOutputs, numNodes + numInputs> PaddedOutput; //used for padded output matrix in state space calcultions
 typedef Eigen::Matrix<double, numInputs, numNodes + numInputs> PaddedInput; //used for padded input matrix in state space calcultions
 
-//State Space Function Matrices
+																			//State Space Function Matrices
 typedef Eigen::Matrix<double, numCap, numCap> StateSpaceA;
 typedef Eigen::Matrix<double, numCap, numInputs> StateSpaceB;
 typedef Eigen::Matrix<double, numCap, numNonLin> StateSpaceC;

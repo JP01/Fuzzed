@@ -4,11 +4,12 @@
               bundleIdentifier="com.yourcompany.FuzzFaceJUCE" includeBinaryInAppConfig="1"
               buildVST="1" buildVST3="0" buildAU="0" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="FuzzFaceJUCE" pluginDesc="FuzzFaceJUCE"
-              pluginManufacturer="yourcompany" pluginManufacturerCode="Manu"
-              pluginCode="Ovyw" pluginChannelConfigs="" pluginIsSynth="0" pluginWantsMidiIn="1"
+              pluginManufacturer="JP Mackel" pluginManufacturerCode="JPM" pluginCode="FfJP"
+              pluginChannelConfigs="{1,1}" pluginIsSynth="0" pluginWantsMidiIn="1"
               pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="FuzzFaceJUCEAU" pluginRTASCategory="" aaxIdentifier="com.yourcompany.FuzzFaceJUCE"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.2.3">
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.2.3"
+              companyName="JP Mackel">
   <MAINGROUP id="zynxBR" name="FuzzFaceJUCE">
     <GROUP id="{8B1551AB-F701-C5C6-54D3-62D937EEF8A6}" name="Source">
       <FILE id="ypLG1h" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -24,6 +25,8 @@
     <FILE id="bOpDTs" name="MyMatrixTypes.h" compile="0" resource="0" file="Source/MyMatrixTypes.h"/>
     <FILE id="kJfekd" name="Simulation.cpp" compile="1" resource="0" file="Source/Simulation.cpp"/>
     <FILE id="UJqkZ9" name="Simulation.h" compile="0" resource="0" file="Source/Simulation.h"/>
+    <FILE id="y0fSJU" name="ProjectSettings.h" compile="0" resource="0"
+          file="Source/ProjectSettings.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2015 targetFolder="Builds/VisualStudio2015" vstFolder="">
@@ -31,7 +34,8 @@
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="FuzzFaceJUCE"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="FuzzFaceJUCE" headerPath="C:\Users\the_m\Desktop\Masters Project Docs\PluginCreation\Libraries\EigenLibraries"/>
+                       isDebug="0" optimisation="3" targetName="FuzzFaceJUCE" headerPath="C:\Users\the_m\Desktop\Masters Project Docs\PluginCreation\Libraries\EigenLibraries"
+                       useRuntimeLibDLL="0" characterSet="Unicode"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE-grapefruit/JUCE/modules"/>
@@ -68,4 +72,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>

@@ -3,17 +3,19 @@
 // all the circuit parameters
 #include "MyMatrixTypes.h"
 #include <iostream>
-
-//Define the default sample rates as 44.1kHz
-#define DEFAULT_SR 44100.
+#include "ProjectSettings.h"
+//Use the namespace in projectsettings.h
+using namespace constants;
 
 class Circuit
 {
 public: //access control
-	const double defaultFuzz = 0.6; //Default value for fuzz
-	const double defaultVol = 0.4;  //Default value for volume
+	const double defaultFuzz = FUZZ_DEFAULT; //Default value for fuzz
+	const double defaultVol = VOL_DEFAULT;  //Default value for volume
+	const double minCTRL = CTRL_MIN; //Sets the minimum allowable value for the parameters
+	const double maxCTRL = CTRL_MAX; //sets the maximum allowable value for the parameters
 
-	//Default Constructor
+									 //Default Constructor
 	Circuit();
 
 	//Constructor with samplerate as an argument
@@ -24,34 +26,39 @@ public: //access control
 	//The samplerate of the system
 	double sampleRate;
 
-	/*Accessors and Mutators*/
-	//Fuzz
-	void setFuzz(double _fuzz);   //function used to set fuzz paramater
-	double getFuzz();                //returns the fuzz parameter
-
-	//Vol
-	void setVol(double _vol);     //function used to set volume parameter
-	double getVol();                 //returns the volume parameter
-
 	double getSaturationCurrent(); //returns the circuit's saturation current IS
 	double getThermalVoltage(); //returns the circuit's thermal voltage VT
 
 	double Circuit::getCircuitSampleRate(); //returns the samplerate
 
-	//StateSpaceMatrices, returns a dynamically sized matrix due to unknown size at compile time
-	//Return the specified state space matrix, takes capital letters only A-K
+											//StateSpaceMatrices, returns a dynamically sized matrix due to unknown size at compile time
+											//Return the specified state space matrix, takes capital letters only A-K
 	Eigen::MatrixXd getStateSpaceMatrix(std::string input);  //Returns the statespace matrix corresponding to the input string, used in testing
 
-	//Nonlinear Function Matrices, returns a dynamically sized matrix due to unknown size at compile time
-	//Returns the nonlinear function matrix corresponding to the input string, used in testing
-	//Acceptable arguements "psi", "phi", "nonLinEquationMatrix", "alteredStateSpaceK"
+															 //Nonlinear Function Matrices, returns a dynamically sized matrix due to unknown size at compile time
+															 //Returns the nonlinear function matrix corresponding to the input string, used in testing
+															 //Acceptable arguements "psi", "phi", "nonLinEquationMatrix", "alteredStateSpaceK"
 	Eigen::MatrixXd getNonlinearFunctionMatrix(std::string input);
 
 	//Refreshes the system matrix with new fuzz and vol values then returns the system matrix
 	SystemMatrix getSystemMatrix() { refreshSystemMatrix();  return systemMatrix; }
 
+
+	//Method to set the fuzz and vol params to the arguement vals.
+	void setParams(double _fuzzVal, double _volVal);
+
+
 protected:
-	//Refresh All matrices, call when paramater change needs to be implemented
+	/*Accessors and Mutators*/
+	//Fuzz
+	void setFuzz(double _fuzz);   //function used to set fuzz paramater
+	double getFuzz();                //returns the fuzz parameter
+
+									 //Vol
+	void setVol(double _vol);     //function used to set volume parameter
+	double getVol();                 //returns the volume parameter
+
+									 //Refresh All matrices, call when paramater change needs to be implemented
 	void refreshFullCircuit();
 
 	//sets the samplerate and updates the matrices
@@ -61,7 +68,7 @@ private: //access control
 	double fuzz;  //value for the fuzz parameter
 	double vol;   //value for the vol parameter
 
-	 //Sample period
+				  //Sample period
 	double T;
 
 	//Resistors Values
@@ -71,7 +78,7 @@ private: //access control
 	const double r6 = 100e3;
 	double r4, r5, r7, r8;        //variable Resistors
 
-	//Capacitors Values
+								  //Capacitors Values
 	const double c1 = 2.2e-6;
 	const double c2 = 20e-6;
 	const double c3 = 10e-9;
@@ -89,16 +96,16 @@ private: //access control
 	void populateCircuitMatrices();	//populate circuit matrices, performed at setup
 	void refreshCircuitMatrices();	//update the circuit matrices
 
-	//Resistor Matrices
+									//Resistor Matrices
 	ResMatrix resMatrix;  //1row 8col - resistor matrix
 	DiagRes diagResMatrix;          //diagonal - resistor matrix
 
-	//Capacitor Matrices
+									//Capacitor Matrices
 	CapMatrix capMatrix;           //1row 3col - capacitor matrix
 	DiagCap diagCapMatrix;          //diagonal - capacitor matrix
 
 
-	/*Incident Matrices*/
+									/*Incident Matrices*/
 	void initialiseIncidentMatrices(); //One time setup of incident matrices, this is performed in the constructor and sets up the incident matrices
 
 	IncidentRes incidentResistors;    //incident resistor matrix
@@ -107,10 +114,10 @@ private: //access control
 	IncidentNonLin incidentNonlinearities;  //incident nonlinearity matrix
 	IncidentOutput incidentOutput;  //incident output matrix
 
-	/**
-	* State Space Matrices
-	*/
-	//Setup functions for the system matrix
+									/**
+									* State Space Matrices
+									*/
+									//Setup functions for the system matrix
 	IntermediateSystemMatrix systemRes;  //Resistor matrix used in calculation of system matrix
 	IntermediateSystemMatrix systemCap;  //Capacitor matrix used in calculation of system matrix
 
@@ -118,7 +125,7 @@ private: //access control
 
 	void refreshSystemMatrix();  //function to setup and refrseh the system matrix
 
-    //Setup functions for the state space terms
+								 //Setup functions for the state space terms
 	PaddedCap padC;  //padded capacitor matrix 
 	PaddedNonLin padNL; //padded nonlinearity matrix 
 	PaddedOutput padO;  //padded output matrix

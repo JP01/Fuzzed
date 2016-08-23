@@ -1,5 +1,6 @@
 #include "Simulation.h"
 
+
 //Default Constructor with default values for samplerate and vcc
 Simulation::Simulation() : Simulation(DEFAULT_SR, DEFAULT_VCC) {};
 
@@ -64,6 +65,10 @@ void Simulation::initialiseSimulationParameters() {
 //Get the system to steady state ready for processing
 void Simulation::getSteadyState() {
 
+	//setup the zero input 
+	float zero = ZERO_INPUT;
+	zeroInput = &zero;
+
 	//MM value is used to get to steady state
 	MM = ceil(durfade * sampleRate);
 
@@ -100,11 +105,6 @@ void Simulation::getSteadyState() {
 	}
 
 
-	//*set up timing signatures
-	time_t timer;
-	time_t timeBefore = time(&timer);
-	std::cout << "timeBefore = " << timeBefore << std::endl;
-
 	//process until steady state is reached
 	for (int i = 0; i < MM*steadyStatePeriodFactor; i++) {
 		//Process the full MM window then pad the rest of the vccv values with vcc = 9;
@@ -116,18 +116,12 @@ void Simulation::getSteadyState() {
 		}
 	}
 
-	//Output the time taken to get steady state
-	time_t timeAfter = time(&timer);
-	std::cout << "timeAfter = " << timeAfter << std::endl;
-	std::cout << "Time taken to compute steady state: " << MM*steadyStatePeriodFactor << " samples = " << timeAfter - timeBefore << " seconds" << std::endl;
-
-	std::cout << "SteadyState Reached, now processing" << std::endl;
 }
 
 //Process the incoming sample
-double Simulation::processSample(double _channelData, double _vcc) {
+void Simulation::processSample(float* _channelData, double _vcc) {
 
-	inputVector(0) = _channelData; //sets the input vector equal to the input channelData
+	inputVector(0) = *_channelData; //sets the input vector equal to the input channelData
 	inputVector(1) = _vcc;
 
 	//Prepare the nonlinear solver
@@ -206,31 +200,23 @@ double Simulation::processSample(double _channelData, double _vcc) {
 	stateSpaceVectorMem = stateSpaceVector;  //xz = x;   Memorise the stateSpaceVector
 	nonLinVoltageVectorMem = nonLinVoltageVector; //vdz = vd;   Memorise the nonLinVoltageVector
 
-	return output; //returns the processed sample
+	*_channelData = output;
+	//return output; //returns the processed sample
 }
 
-//Process the incoming buffer and return a Vector of the output as another buffer
-Eigen::VectorXd Simulation::processBuffer(Eigen::VectorXd inputBuffer) {
-	//Refresh all matrices to ensure current fuzz / vol settings are used in calculation
+
+
+//Method to set the fuzz and vol params to the arguement vals and then refresh the system.
+void Simulation::setParams(double _fuzzVal, double _volVal) {
+	Circuit::setParams(_fuzzVal, _volVal);
+	//Refresh the system with updated values
 	refreshAll();
-
-	//resize the output buffer to the same size as the input buffer
-	outputBuffer.resizeLike(inputBuffer);
-
-	//loop through every sample in the buffer, running the processSample() method on each sample and assigning it to the corresponding outputBuffer at index "i"
-	for (int i = 0; i < inputBuffer.size(); i++) {
-
-		//Populate the output buffer with result of processing the current sample at index "i"
-		outputBuffer(i) = processSample(inputBuffer(i), vcc);
-	}
-
-	//returns the outputBuffer vector
-	return outputBuffer;
 }
+
 
 
 //Set the sampleRate and return the system to steady state
-void Simulation::setSimSampleRate(double _sampleRate) 
+void Simulation::setSimSampleRate(double _sampleRate)
 {
 	setCircuitSampleRate(_sampleRate);
 	sampleRate = _sampleRate;
