@@ -24,6 +24,10 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 	addParameter(volParam = new AudioParameterFloat("vol", "Vol", CTRL_MIN, CTRL_MAX, VOL_DEFAULT));
 	addParameter(fuzzParam = new AudioParameterFloat("fuzz", "Fuzz", CTRL_MIN, CTRL_MAX, FUZZ_DEFAULT));
 	addParameter(gainParam = new AudioParameterFloat("gain", "Gain", 0.0, 1.0, 0.5));
+	//Sets the volVal and fuzzVal to defaults
+	volVal = VOL_DEFAULT;
+	fuzzVal = FUZZ_DEFAULT;
+	
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -128,6 +132,9 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	const int totalNumInputChannels = getTotalNumInputChannels();
 	const int totalNumOutputChannels = getTotalNumOutputChannels();
 
+	//Set the channel to 0 as the plugin is mono
+	const int channel = 0;
+
 	// In case we have more outputs than inputs, this code clears any output
 	// channels that didn't contain input data, (because these aren't
 	// guaranteed to be empty - they may contain garbage).
@@ -146,27 +153,26 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	}
 
 
-	//Check if params have changed
-	if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
-		//Set the paramvalues	
-		volVal = *volParam;
-		fuzzVal = *fuzzParam;
-		sim.setParams(fuzzVal, volVal);
+	//Process		
+	for (int index = 0; index < buffer.getNumSamples(); ++index)
+	{
+		//Check if params have changed
+		if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
+			//Set the paramvalues	
+			volVal = *volParam;
+			fuzzVal = *fuzzParam;
+			//Refresh the sim
+			sim.setParams(fuzzVal, volVal);
+		}
+
+		//get the pointer to the channel data at the index
+		float* channelData = buffer.getWritePointer(channel, index);
+		//Scale the data for processing
+		*channelData *= 0.05;
+		//process the data
+		sim.processSample(channelData, DEFAULT_VCC);
 	}
 	
-	//Process	
-	for (int channel = 0; channel < totalNumInputChannels; ++channel) {
-		for (int index = 0; index < buffer.getNumSamples(); ++index)
-		{
-			//get the pointer to the channel data at the index
-			float* channelData = buffer.getWritePointer(channel, index);
-			//Scale the data for processing
-			*channelData *= 0.05;
-			//process the data
-			sim.processSample(channelData, DEFAULT_VCC);
-
-		}
-	}
 
 }
 
