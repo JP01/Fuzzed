@@ -47,6 +47,7 @@ public: //access control
 	//Method to set the fuzz and vol params to the arguement vals.
 	void setParams(double _fuzzVal, double _volVal);
 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW //Aligns all the Eigen Members in the class to avoid memory allocation errors... see https://eigen.tuxfamily.org/dox/group__TopicUnalignedArrayAssert.html & https://eigen.tuxfamily.org/dox/group__TopicStructHavingEigenMembers.html
 
 protected:
 	/*Accessors and Mutators*/
@@ -64,13 +65,25 @@ protected:
 	//sets the samplerate and updates the matrices
 	void setCircuitSampleRate(double _sampleRate);
 
+	StateSpaceA stateSpaceA;
+	StateSpaceB stateSpaceB;
+	StateSpaceC stateSpaceC;
+	StateSpaceD stateSpaceD;
+	StateSpaceE stateSpaceE;
+	StateSpaceF stateSpaceF;
+	StateSpaceG stateSpaceG;
+	StateSpaceH stateSpaceH;
+	StateSpaceK stateSpaceK;
+
+	//Sample period
+	double samplePeriod;
+
+
 private: //access control
 	double fuzz;  //value for the fuzz parameter
 	double vol;   //value for the vol parameter
 
-				  //Sample period
-	double T;
-
+	
 	//Resistors Values
 	const double r1 = 33e3;
 	const double r2 = 8.2e3;
@@ -97,7 +110,7 @@ private: //access control
 	void refreshCircuitMatrices();	//update the circuit matrices
 
 									//Resistor Matrices
-	ResMatrix resMatrix;  //1row 8col - resistor matrix
+	ResMatrix resMatrix;            //1row 8col - resistor matrix
 	DiagRes diagResMatrix;          //diagonal - resistor matrix
 
 									//Capacitor Matrices
@@ -131,15 +144,7 @@ private: //access control
 	PaddedOutput padO;  //padded output matrix
 	PaddedInput padI;   //padded input matrix
 
-	StateSpaceA stateSpaceA;
-	StateSpaceB stateSpaceB;
-	StateSpaceC stateSpaceC;
-	StateSpaceD stateSpaceD;
-	StateSpaceE stateSpaceE;
-	StateSpaceF stateSpaceF;
-	StateSpaceG stateSpaceG;
-	StateSpaceH stateSpaceH;
-	StateSpaceK stateSpaceK;
+	
 
 	//Refresh the nonlinear state space equations with updated fuzz and vol settings
 	void refreshNonLinStateSpace();

@@ -11,6 +11,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
 //Define the ParameterSlider class and methods
 class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private Timer
 {
@@ -26,13 +27,18 @@ class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private
 
 			//Updates the slider position
 			updateSliderPos();
+			
 		}
-
+		
 		//Calls the setValueNotifyingHost method when value is changed
-		//Allows the host/editor to modify the slider values
+		//Allows the plugin to send data to the host, changing the param value in the host window to that of the plugin window
 		void valueChanged() override
-		{
-			param.setValueNotifyingHost((float)Slider::getValue());
+		{	
+			//If the mouse is being held then the user is trying to set the value from the UI and this should be used
+			if (isMouseButtonDown()) {
+				param.setValueNotifyingHost((float)Slider::getValue());
+			}
+			//Else let the host decide the parameter (ie allow automation of the parameter from the host)
 		}
 
 		//This method is called at regular intervals of TIMER_FREQ
@@ -41,7 +47,7 @@ class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private
 			//the param values
 			updateSliderPos(); 			
 		}
-
+		
 		//Calls the beginChangeGesture method to allow the host to know when a parameter is being held by user
 		void startedDragging() override { param.beginChangeGesture();	}
 		//Calls the endChangeGesture method to allow the host to know when a parameter has been let go by the user
@@ -55,18 +61,26 @@ class FuzzFaceJuceAudioProcessorEditor::ParameterSlider : public Slider, private
 
 		//updates the slider position
 		void updateSliderPos()
-		{
+		{			
 			//sets newValue as the current param value
 			const float newValue = param.getValue();
 
 			//If the param value does not match the slider value then update
-			if (newValue != (float)Slider::getValue() && !isMouseButtonDown())
+			if (newValue != (float)Slider::getValue())
 			{
+				//Sets the slider value to this value
 				Slider::setValue(newValue);
+
+				//If the user is actively holding the slider in a position then set the parameter to this held value
+				if (isMouseButtonDown()) {
+					//Notifies the host of this new value being held to cancel any automation that the host may be doing
+					param.setValueNotifyingHost((float)Slider::getValue());
+				}
 			}
+
 		}
 		
-	
+
 		AudioProcessorParameter& param; //declare a param object for referencing inside the class
 		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterSlider)
 };
@@ -76,8 +90,10 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	: AudioProcessorEditor(&p), processor(p),
 	gainLabel(String::empty, "Input Gain: "),
 	volLabel(String::empty, "Vol: "),
-	fuzzLabel(String::empty, "Fuzz: ")
-	
+	fuzzLabel(String::empty, "Fuzz: "),
+	inputSignalLabel(String::empty, "Input Signal: ")
+
+		
 {
 	//Add the sliders to the editor
 	//Adds the input gain slider
@@ -85,32 +101,64 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	//Set the slider as a rotary
 	gainSlider->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	//Sets the textbox Below, editable, width and height
-	gainSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
+	gainSlider->setTextBoxStyle(Slider::TextBoxBelow, true, TEXT_BOX_WIDTH, TEXT_BOX_HEIGHT);	
+	//Sets the sensitivity of the slider
+	gainSlider->setMouseDragSensitivity(SLIDER_SENS);
+	//Sets the suffix to appear to allow the user to know what knob is being controlled
+	gainSlider->setTextValueSuffix(" dB");
+
 
 	//Adds the Vol Slider
 	addAndMakeVisible(volSlider = new ParameterSlider(*p.volParam));
 	//Set the slider as a rotary
 	volSlider->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	//Sets the textbox below, editable, width and height
-	volSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
+	volSlider->setTextBoxStyle(Slider::NoTextBox, true, TEXT_BOX_WIDTH, TEXT_BOX_HEIGHT);
+	//Sets the sensitivity of the slider
+	volSlider->setMouseDragSensitivity(SLIDER_SENS);
+	//Set the popup box to display when in use
+	volSlider->setPopupDisplayEnabled(true, this);
+	//Sets the suffix to appear to allow the user to know what knob is being controlled
+	volSlider->setTextValueSuffix(" Vol");
 
 	//Adds the Fuzz Slider
 	addAndMakeVisible(fuzzSlider = new ParameterSlider(*p.fuzzParam));
 	//Set the slider as a rotary
 	fuzzSlider->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	//Sets the textbox below, editable, width and height
-	fuzzSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-	
-	
-	//Add labels to the sliders
+	fuzzSlider->setTextBoxStyle(Slider::NoTextBox, true, TEXT_BOX_WIDTH, TEXT_BOX_HEIGHT);
+	//Sets the sensitivity of the slider
+	fuzzSlider->setMouseDragSensitivity(SLIDER_SENS);
+	//Set the popup box to display when in use
+	fuzzSlider->setPopupDisplayEnabled(true, this);
+	//Sets the suffix to appear to allow the user to know what knob is being controlled
+	fuzzSlider->setTextValueSuffix(" Fuzz");
+
+
+	//Attach the labels to the components
 	gainLabel.attachToComponent(gainSlider, false);
 	gainLabel.setFont(Font(16.0));
+	gainLabel.setColour(Label::textColourId, Colour(Colours::white));
+
 
 	volLabel.attachToComponent(volSlider, false);
 	volLabel.setFont(Font(16.0));
+	volLabel.setColour(Label::textColourId, Colour(Colours::white));
 
 	fuzzLabel.attachToComponent(fuzzSlider, false);
 	fuzzLabel.setFont(Font(16.0));
+	fuzzLabel.setColour(Label::textColourId, Colour(Colours::white));
+
+	//Add the input signal tracer into the UI
+	addAndMakeVisible(inputSignalLabel);
+	inputSignalLabel.setFont(Font(16.0));
+	
+
+	//Set the sliders to the custom UI class
+	gainSlider->setLookAndFeel(myLookAndFeel);
+	volSlider->setLookAndFeel(myLookAndFeel);
+	fuzzSlider->setLookAndFeel(myLookAndFeel);
+
 
 
 
@@ -119,19 +167,29 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 
 	//sets the size to width, height
 	setSize(WIN_WIDTH, WIN_HEIGHT);
-
+	startTimerHz(P_TIMER_FREQ);
 }
 
 FuzzFaceJuceAudioProcessorEditor::~FuzzFaceJuceAudioProcessorEditor()
 {
 }
 
+void FuzzFaceJuceAudioProcessorEditor::timerCallback()
+{
+	inputSignalLabel.setText("Input Signal: " + std::to_string(processor.currentInput), dontSendNotification);
+}
+
 //==============================================================================
 void FuzzFaceJuceAudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll (Colours::white);
+	//Set the colour for the backgroun
+	Colour colour(149,00,00);
+	//Fill the backgroun
+    g.fillAll (colour);
 
-    g.setColour (Colours::black);
+
+	//Set the text colour
+    g.setColour (Colours::white);
     g.setFont (15.0f);
     g.drawFittedText ("FuzzFace", getLocalBounds(), Justification::centredTop, 1);
 }
@@ -141,9 +199,9 @@ void FuzzFaceJuceAudioProcessorEditor::resized()
     //Layout and size of the sliders 
 	gainSlider->setBounds(60, 50, KNOB_WIDTH, KNOB_HEIGHT);
 	volSlider->setBounds(260, 50, KNOB_WIDTH, KNOB_HEIGHT);
-	fuzzSlider->setBounds(420, 50, KNOB_WIDTH, KNOB_HEIGHT);
-	
-
+	fuzzSlider->setBounds(420, 50, KNOB_WIDTH, KNOB_HEIGHT);	
+	inputSignalLabel.setBounds(50, 160, 200, 20);
 }
 
 //===========================================================
+

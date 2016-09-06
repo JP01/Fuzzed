@@ -1,5 +1,6 @@
 #pragma once
 #include "Eigen/Dense"
+#include "ProjectSettings.h"
 
 //Circuit parameters
 const int numNodes = 10;  //10 Nodes
@@ -9,8 +10,8 @@ const int numInputs = 2;  //Number of inputs
 const int numNonLin = 4; //Number of nonlinearities
 const int numOutputs = 1; //Number of outputs
 
-						  /*Define the matrix types for use throughout the Circuit class, predefined to reduce use of Eigen::Dynamic */
-						  //Circuit and System matrices
+/*Define the matrix types for use throughout the Circuit class, predefined to reduce use of Eigen::Dynamic */
+//Circuit and System matrices
 typedef Eigen::Matrix<double, numOutputs, numRes> ResMatrix; //used for resistor
 typedef Eigen::Matrix<double, numRes, numRes> DiagRes;       // used for diagonal resistor matrix
 typedef Eigen::Matrix<double, numOutputs, numCap> CapMatrix; //used for capacitor
@@ -44,3 +45,4 @@ typedef Eigen::Matrix<double, numNonLin, numNonLin> StateSpaceK;
 
 //Nonlinear function matrices
 typedef Eigen::Matrix<double, numNonLin, numNonLin> NonlinearFunctionMatrix;
+

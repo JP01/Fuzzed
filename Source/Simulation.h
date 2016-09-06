@@ -34,7 +34,11 @@ public:
 
 	//Method to set the fuzz and vol params to the arguement vals and then refresh the system.
 	void setParams(double _fuzzVal, double _volVal);
+	
+	//Gets the system to a steady state ready for processing
+	void getSteadyState();
 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW //Aligns all the Eigen Members in the class to avoid memory allocation errors... see https://eigen.tuxfamily.org/dox/group__TopicUnalignedArrayAssert.html & https://eigen.tuxfamily.org/dox/group__TopicStructHavingEigenMembers.html
 
 private:
 	//Refresh all the circuit values and setup the statespace matrices used in the simulation
@@ -43,23 +47,16 @@ private:
 	//Buffer size in samples, defaulted to...??
 	int bufferSize;
 
-	//Gets the system to a steady state ready for processing
-	void getSteadyState();
-
-	//zero input used as signal for warmup phase / getSteadyState
-	float* zeroInput;
-
 	/* Input */
 	//VCC voltage
 	double vcc = DEFAULT_VCC; //steady state voltage
 	const double durfade = DURFADE; //duration of the faded power up
-	int MM; //integer rounded value used during the powerup phase
-	const double steadyStatePeriodFactor = STEADY_STATE_FACTOR; //Factor which controls the size of the window window used to reach steady state (where window size in samples = MM*steadyStateFactor)
+	int hanWin; //length in samples of the hanning window for voltage ramping, used in the get steady state phase
+	const double steadyStatePeriodFactor = STEADY_STATE_FACTOR; //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
 
 	Eigen::VectorXd win; //hanning window
 	Eigen::VectorXd vccv; //power up voltage used in initial setup
-	Eigen::VectorXd powerUpTimeVector; //time vector used in the powerup phase
-
+	
 	const double maxIterations = MAX_ITERATIONS;
 	const double maxSubIterations = MAX_SUB_ITERATIONS;
 

@@ -6,8 +6,8 @@
 /*Calls the default constructor with default 44.1k Hz sample rate */
 Circuit::Circuit() : Circuit(DEFAULT_SR) {};
 
-/*Constructor which takes sampleRate as an arguement and initialises the sampling period T to 1./sampleRate */
-Circuit::Circuit(double _sampleRate) :T(1. / _sampleRate) {
+/*Constructor which takes sampleRate as an arguement and initialises the sampling period to 1./sampleRate */
+Circuit::Circuit(double _sampleRate) :samplePeriod(1. / _sampleRate) {
 
 	//Set the sampleRate of the circuit to input _sampleRate
 	sampleRate = _sampleRate;
@@ -46,7 +46,7 @@ void Circuit::populateCircuitMatrices() {
 
 	//prep the capacitor values for input into diagonal matrix
 	capMatrix << c1, c2, c3;
-	capMatrix = (2 * capMatrix) / T;
+	capMatrix = (2 * capMatrix) / samplePeriod;
 
 	//Convert the matrices to diagonal matrices
 	diagResMatrix = resMatrix.asDiagonal();
@@ -190,14 +190,15 @@ void Circuit::refreshNonlinearFunctions() {
 
 /* Create a setter for the Fuzz parameter, when input is outside the allowable range 0 > fuzzVal > 1 */
 void Circuit::setFuzz(double _fuzz) {
-	//Checks fuzzVal is within allowable range
-	if (_fuzz >= CTRL_MAX) 
+	//Checks value is within allowable upper range, if the value is greater than 1-0.001 = 0.999 then default to 0.999
+	if (_fuzz > CTRL_MAX - CTRL_INCREMENT) 
 	{
 		//Defaults value to MAX - INCREMENT and prints a message
 		std::cout << "Fuzz greater than range, defaulted to " << CTRL_MAX - CTRL_INCREMENT << std::endl;
 		fuzz = CTRL_MAX - CTRL_INCREMENT;
 	} 
-	else if (_fuzz <= CTRL_MIN)
+	//Checks value is within allowable lower range, if the valuse is less than 0.0 + 0.001 = 0.001 then default to 0.001
+	else if (_fuzz < CTRL_MIN + CTRL_INCREMENT)
 	{
 		//Defaults value to Min and prints a message
 		std::cout << "Fuzz less than range, defaulted to " << CTRL_MIN + CTRL_INCREMENT << std::endl;
@@ -218,14 +219,15 @@ double Circuit::getFuzz()
 
 /* Create a setter for the Vol parameter, when input is outside the allowable range 0 > volVal > 1, default to 0.4 */
 void Circuit::setVol(double _vol) {
-	//Checks volVal is within allowable range
-	if (_vol >= CTRL_MAX)
+	//Checks value is within allowable upper range, if the value is greater than 1-0.001 = 0.999 then default to 0.999
+	if (_vol > CTRL_MAX - CTRL_INCREMENT)
 	{
 		//Defaults value to MAX - INCREMENT and prints a message
 		std::cout << "Vol greater than range, defaulted to " << CTRL_MAX - CTRL_INCREMENT << std::endl;
 		vol = CTRL_MAX - CTRL_INCREMENT;
 	}
-	else if (_vol <= CTRL_MIN)
+	//Checks value is within allowable lower range, if the valuse is less than 0.0 + 0.001 = 0.001 then default to 0.001
+	else if (_vol < CTRL_MIN + CTRL_INCREMENT)
 	{
 		//Defaults value to Min + Increment and prints a message
 		std::cout << "Vol less than range, defaulted to " << CTRL_MIN + CTRL_INCREMENT << std::endl;

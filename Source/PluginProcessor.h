@@ -26,22 +26,24 @@ public:
     ~FuzzFaceJuceAudioProcessor();
 
 	//==============================================================================
-	//Instance of the simulation class
-	Simulation sim;
+	//Instance of the simulation class, using scoped pointer to avoid memory leaking
+	ScopedPointer<Simulation> sim = new Simulation();
 
 	//Parameters
-	AudioParameterFloat* volParam;
-	AudioParameterFloat* fuzzParam;
-	AudioParameterFloat* gainParam;
+	ScopedPointer<AudioParameterFloat> volParam;
+	ScopedPointer<AudioParameterFloat> fuzzParam;
+	ScopedPointer<AudioParameterFloat> gainParam;
 
 	double volVal, fuzzVal, gainVal;
 
 	//value for currentSampleRate
-	double currentSampleRate = DEFAULT_SR;
+	double currentSampleRate;
+	double SMOOTH_COEFF;
+
 
 	//Param smoothing
-	double smooth(double input);
-
+	double smoothVol(double input);
+	double smoothFuzz(double input);
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -79,10 +81,15 @@ public:
 
 	//==============================================================================
 	
+	//Monitor the input to the FUZZFACE simulation, the value to be displayed on inputSignal Label
+	double currentInput;
 
 private:
-
+	//Timer callback used for parameter updates
 	void timerCallback() override;
+
+	//Input scaling, including a clipper  used to limit the max input to signal and avoid crashes
+	void inputScaling(float* _channelData);
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FuzzFaceJuceAudioProcessor)

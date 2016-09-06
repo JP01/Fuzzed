@@ -7,9 +7,6 @@ Simulation::Simulation() : Simulation(DEFAULT_SR, DEFAULT_VCC) {};
 //Constructor with Args, calls the superclass constructor with the same sampleRate
 Simulation::Simulation(double _sampleRate, double _vcc) : Circuit(_sampleRate)
 {
-	//set sampleRate to _sampleRate
-	sampleRate = _sampleRate;
-
 	//set vcc to _vcc
 	vcc = _vcc;
 
@@ -39,7 +36,7 @@ void Simulation::refreshAll()
 	simStateSpaceF = getStateSpaceMatrix("F");
 	simStateSpaceG = getStateSpaceMatrix("G");
 	simStateSpaceH = getStateSpaceMatrix("H");
-
+	
 	simPSI = getNonlinearFunctionMatrix("psi");
 	simAlteredStateSpaceK = getNonlinearFunctionMatrix("alteredStateSpaceK");
 	simNonLinEquationMatrix = getNonlinearFunctionMatrix("nonLinEquationMatrix");
@@ -64,57 +61,57 @@ void Simulation::initialiseSimulationParameters() {
 
 //Get the system to steady state ready for processing
 void Simulation::getSteadyState() {
+	//zero input used as signal for warmup phase / getSteadyState
+	float* zeroInput;
 
 	//setup the zero input 
 	float zero = ZERO_INPUT;
 	zeroInput = &zero;
 
-	//MM value is used to get to steady state
-	MM = ceil(durfade * sampleRate);
+	//hanWin value is used to get to steady state
+	hanWin = (int) ceil(durfade * sampleRate);
 
-	//TM = 1./MM	
+	//TM = 1./hanWin	
 	//Declare the variable TM used in the time vector
-	double T = 1 / sampleRate;
+	samplePeriod = 1 / sampleRate;
 
-	//Resize the vccv vector to match MM
-	vccv.resize(MM);
-	//Resize the win vector to match 2*MM
-	win.resize(2 * MM);
-	//Resize the powerUpTimeVector to MM
-	powerUpTimeVector.resize(MM);
-
+	//Resize the vccv vector to match hanWin
+	vccv.resize(hanWin);
+	//Resize the win vector to match 2*hanWin
+	win.resize(2 * hanWin);
 
 	/*VCCV Hanning multiplier to achieve steady state*/
 	//Hanning win multiplier
-	for (int i = 0; i < 2 * MM; i++) {
+	for (int i = 0; i < 2 * hanWin; i++) {
 		//calculate the hanning value at angle "i" 
-		double multiplier = 0.5*(1 - cos((2 * PI * i) / (2 * MM - 1)));
+		double multiplier = 0.5*(1 - cos((2 * PI * i) / (2 * hanWin - 1)));
 		//set the value at index win(i) equal to the multiplier
 		win(i) = multiplier;
 	}
 
-	//Population loop, populates the vcc powerUpTimeVector and dummyData
-	for (int i = 0; i < MM; i++) {
+	//Population loop, populates the vcc dummyData
+	for (int i = 0; i < hanWin; i++) {
 		//Multiply vcc by the ramp up section to get ramp up voltage
 		//Multiply the hanning value by max voltage vcc at index "i" and input into vccv
 		vccv(i) = win(i) * vcc;
-
-		//t = (0:MM)*T 
-		//Populate the time vector
-		powerUpTimeVector(i) = i*T;
 	}
 
 
 	//process until steady state is reached
-	for (int i = 0; i < MM*steadyStatePeriodFactor; i++) {
-		//Process the full MM window then pad the rest of the vccv values with vcc = 9;
-		if (i < MM) {
+	for (int i = 0; i < hanWin*steadyStatePeriodFactor; i++) {
+		//Process the full hanWin window then pad the rest of the vccv values with vcc = 9;
+		if (i < hanWin) {
 			processSample(zeroInput, vccv(i));
 		}
 		else {
 			processSample(zeroInput, vcc);
 		}
 	}
+
+
+	//Get rid of the zeroInput pointer to free the memory
+	delete zeroInput;
+	zeroInput = NULL;
 
 }
 
@@ -161,7 +158,7 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 			- nonLinSolverInput;                                                                               //-pd
 
 																											   //m = 0
-		subIterCounter = 0.0;
+		subIterCounter = 0;
 
 		//STP = STEP;
 		newtonStepTemp = newtonStep;
@@ -204,16 +201,12 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 	//return output; //returns the processed sample
 }
 
-
-
 //Method to set the fuzz and vol params to the arguement vals and then refresh the system.
 void Simulation::setParams(double _fuzzVal, double _volVal) {
 	Circuit::setParams(_fuzzVal, _volVal);
 	//Refresh the system with updated values
 	refreshAll();
 }
-
-
 
 //Set the sampleRate and return the system to steady state
 void Simulation::setSimSampleRate(double _sampleRate)

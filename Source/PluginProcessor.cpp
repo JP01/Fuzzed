@@ -23,7 +23,7 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 	//Create the parameters 
 	addParameter(gainParam = new AudioParameterFloat("gain", "Gain", GAIN_MIN, GAIN_MAX, GAIN_DEFAULT));
 	addParameter(volParam = new AudioParameterFloat("vol", "Vol", CTRL_MIN, CTRL_MAX, VOL_DEFAULT));
-	addParameter(fuzzParam = new AudioParameterFloat("fuzz", "Fuzz", CTRL_MIN, CTRL_MAX, FUZZ_DEFAULT));
+	addParameter(fuzzParam = new AudioParameterFloat("fuzz", "Fuzz", CTRL_MIN, CTRL_MAX, CTRL_MIN));
 	
 	//Sets the volVal and fuzzVal to defaults
 	gainVal = pow(10, (GAIN_DEFAULT/10)); //in dB
@@ -31,6 +31,13 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 	fuzzVal = FUZZ_DEFAULT;
 	//Sets the frequency for the timerCallback method to 1ms
 	startTimerHz(P_TIMER_FREQ);
+
+	//Default the samplerate
+	currentSampleRate = DEFAULT_SR;
+
+	//Default the smoothing coeff
+	SMOOTH_COEFF = exp((-2 * PI) / SMOOTHING_TIME_MS*0.001*P_TIMER_FREQ);
+
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -93,8 +100,8 @@ void FuzzFaceJuceAudioProcessor::changeProgramName (int index, const String& new
 //==============================================================================
 void FuzzFaceJuceAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+	//Get the system into steady state in preperation for processing
+	//sim->getSteadyState();
 }
 
 void FuzzFaceJuceAudioProcessor::releaseResources()
@@ -147,31 +154,73 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i) 
 		buffer.clear(i, 0, buffer.getNumSamples());
 
+//===========================================================================================
 
-	//If the sampleRate has changes then update the sim samplerate
+	//If the sampleRate has changes then update the sim samplerate and clipping filter coeffs
 	if (currentSampleRate != getSampleRate()) {
 		currentSampleRate = getSampleRate();
-		sim.setSimSampleRate(currentSampleRate);
+		sim->setSimSampleRate(currentSampleRate);	
 	}
+
+	
+//===========================================================================================
+
+	//Check if fuzz or vol params have changed
+	if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
+		//Sets the volume here as it doesn't cause zipping
+		volVal = *volParam;
+
+		//Refresh the sim with new parameter values
+		sim->setParams(fuzzVal, volVal);
+	}
+
+//===========================================================================================
 
 	//Check if the gainVal matches the parameter and update
 	if (gainVal = pow(10, (*gainParam / 10))) {
-		//Apply the input gain
-		buffer.applyGain(gainVal);
+		//Apply gain to the sample
+		//buffer.applyGain(gainVal);
 	}
 
-
-	//Process		
+//===========================================================================================
+	//Process Samples		 
 	for (int index = 0; index < buffer.getNumSamples(); ++index)
 	{	
 		//get the pointer to the channel data at the index
 		float* channelData = buffer.getWritePointer(channel, index);
-		//Scale the data for processing
-		*channelData *= 0.05;
+		
+		//Apply the input gain to the sample
+		*channelData *= gainVal;
+
+		//Scale the signal for input to the system and clip the signal if outside allowable range
+		inputScaling(channelData);
+
+		//Update the double for displaying the input signal label
+		currentInput = abs(*channelData);
+
 		//process the data
-		sim.processSample(channelData, DEFAULT_VCC);
+		sim->processSample(channelData, DEFAULT_VCC);
+
+		*channelData *= OUTPUT_SCALAR;
 	}
+}
+
+//===========================================================================================
+//Scale the input, hard clip if the scaled input is still above the CLIPPING POINT, this
+//stops the system from crashing when the input signal is too high
+void FuzzFaceJuceAudioProcessor::inputScaling(float* _channelData) {
+	//Scale the input Signal
+	*_channelData *= MAX_INPUT_SIG * pow(2, -INPUT_SCALAR);
 	
+
+	//Hard Clipping
+	//If signal is greater than max set it to max
+	if (*_channelData >= CLIPPING_POINT) {
+		*_channelData = CLIPPING_POINT;
+	}
+	else if (*_channelData <= -CLIPPING_POINT) {
+		*_channelData = -CLIPPING_POINT;
+	}
 
 }
 
@@ -181,26 +230,20 @@ void FuzzFaceJuceAudioProcessor::timerCallback()
 	//Set the gainVal to the value from the slider in dB
 	gainVal = pow(10,(*gainParam/10));
 
-	//Check if fuzz or vol params have changed
-	if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
-		//Set the new target value
-		volVal = smooth(*volParam);
-		fuzzVal = smooth(*fuzzParam);			
-		
-		//Refresh the sim
-		sim.setParams(fuzzVal, volVal);
-	}
-
-
-
+	//Set the fuzzVal here for now
+	fuzzVal = smoothFuzz(*fuzzParam);
 
 }
 
-double FuzzFaceJuceAudioProcessor::smooth(double input) {
+double FuzzFaceJuceAudioProcessor::smoothVol(double input) {
 	volVal = SMOOTH_COEFF * (volVal - input) + input;
 	return volVal;
 }
 
+double FuzzFaceJuceAudioProcessor::smoothFuzz(double input) {
+	fuzzVal = SMOOTH_COEFF * (fuzzVal - input) + input;
+	return fuzzVal;
+}
 
 //==============================================================================
 bool FuzzFaceJuceAudioProcessor::hasEditor() const

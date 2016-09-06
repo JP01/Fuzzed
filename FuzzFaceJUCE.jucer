@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="OvywMk" name="FuzzFaceJUCE" projectType="audioplug" version="1.0.0"
-              bundleIdentifier="com.yourcompany.FuzzFaceJUCE" includeBinaryInAppConfig="1"
+              bundleIdentifier="com.JPMACKEL.FuzzFaceJUCE" includeBinaryInAppConfig="1"
               buildVST="1" buildVST3="0" buildAU="0" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="FuzzFaceJUCE" pluginDesc="FuzzFaceJUCE"
               pluginManufacturer="JP Mackel" pluginManufacturerCode="JPM" pluginCode="FfJP"
@@ -12,6 +12,9 @@
               companyName="JP Mackel">
   <MAINGROUP id="zynxBR" name="FuzzFaceJUCE">
     <GROUP id="{8B1551AB-F701-C5C6-54D3-62D937EEF8A6}" name="Source">
+      <FILE id="aCwut2" name="MyLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/MyLookAndFeel.cpp"/>
+      <FILE id="mpknsg" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
       <FILE id="ypLG1h" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="Vmcldh" name="PluginProcessor.h" compile="0" resource="0"
@@ -27,6 +30,7 @@
     <FILE id="UJqkZ9" name="Simulation.h" compile="0" resource="0" file="Source/Simulation.h"/>
     <FILE id="y0fSJU" name="ProjectSettings.h" compile="0" resource="0"
           file="Source/ProjectSettings.h"/>
+    <FILE id="blIBDh" name="myKnobStrip.png" compile="0" resource="1" file="../../../../../Pictures/myKnobStrip.png"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2015 targetFolder="Builds/VisualStudio2015" vstFolder="">
@@ -35,7 +39,7 @@
                        isDebug="1" optimisation="1" targetName="FuzzFaceJUCE"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="0" optimisation="3" targetName="FuzzFaceJUCE" headerPath="C:\Users\the_m\Desktop\Masters Project Docs\PluginCreation\Libraries\EigenLibraries"
-                       useRuntimeLibDLL="0" characterSet="Unicode"/>
+                       useRuntimeLibDLL="0" characterSet="Unicode" alwaysGenerateDebugSymbols="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE-grapefruit/JUCE/modules"/>
