@@ -19,7 +19,7 @@ namespace constants {
 	const double GAIN_MAX = 6; //in db
 
 	//Input Signal/ Clipping control
-	const double INPUT_SCALAR = 2; //scales the input signal to the processSample method by a factor of MAX_INPUT_SIG * (2^-INPUT_SCALAR)
+	const double INPUT_SCALAR = 3; //scales the input signal to the processSample method by a factor of MAX_INPUT_SIG * (2^-INPUT_SCALAR)
 	const double MAX_INPUT_SIG = 0.1; //The maximum value that can be put into the system and maintain stability, 
 	const double CLIPPING_POINT = 0.1; //if the input signal excedes this then clip to ensure system cannot crash
 	const double OUTPUT_SCALAR = 2; //Scale the output of the system back up to useable levels
@@ -31,8 +31,12 @@ namespace constants {
 	const int UI_TIMER_FREQ = 100;
 	//timer freq for the param updater in hz
 	const int P_TIMER_FREQ = 1000;
-	//the time in ms between parameter updates
-	const double SMOOTHING_TIME_MS = 300;
+	//the time in s between parameter updates
+	const double SMOOTHING_TIME_S = 0.01;
+
+	//controls the number of samples between parameter updates
+	const int UPDATE_PARAM_SAMPLE_INTERVAL = 16;
+
 
 	//Defaults for the parameters
 	const double GAIN_DEFAULT = 0;

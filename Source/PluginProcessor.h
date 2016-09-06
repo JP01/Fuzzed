@@ -36,14 +36,11 @@ public:
 
 	double volVal, fuzzVal, gainVal;
 
+	ScopedPointer<LinearSmoothedValue<double>> linFuzzSmoother = new LinearSmoothedValue<double>;
+
 	//value for currentSampleRate
 	double currentSampleRate;
-	double SMOOTH_COEFF;
 
-
-	//Param smoothing
-	double smoothVol(double input);
-	double smoothFuzz(double input);
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;

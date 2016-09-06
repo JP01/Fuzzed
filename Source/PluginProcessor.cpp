@@ -35,9 +35,7 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 	//Default the samplerate
 	currentSampleRate = DEFAULT_SR;
 
-	//Default the smoothing coeff
-	SMOOTH_COEFF = exp((-2 * PI) / SMOOTHING_TIME_MS*0.001*P_TIMER_FREQ);
-
+	linFuzzSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -137,7 +135,9 @@ bool FuzzFaceJuceAudioProcessor::setPreferredBusArrangement (bool isInput, int b
 
 
 void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
-{
+{	
+	int numberOfSamples = buffer.getNumSamples();
+
 	//Declare the consts for number of channels
 	const int totalNumInputChannels = getTotalNumInputChannels();
 	const int totalNumOutputChannels = getTotalNumOutputChannels();
@@ -159,21 +159,11 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	//If the sampleRate has changes then update the sim samplerate and clipping filter coeffs
 	if (currentSampleRate != getSampleRate()) {
 		currentSampleRate = getSampleRate();
+		//sets the simulation samplerate to current samplerate from DAW
 		sim->setSimSampleRate(currentSampleRate);	
+
 	}
-
-	
-//===========================================================================================
-
-	//Check if fuzz or vol params have changed
-	if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
-		//Sets the volume here as it doesn't cause zipping
-		volVal = *volParam;
-
-		//Refresh the sim with new parameter values
-		sim->setParams(fuzzVal, volVal);
-	}
-
+		
 //===========================================================================================
 
 	//Check if the gainVal matches the parameter and update
@@ -184,8 +174,23 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 
 //===========================================================================================
 	//Process Samples		 
-	for (int index = 0; index < buffer.getNumSamples(); ++index)
+	for (int index = 0; index < numberOfSamples; ++index)
 	{	
+		//each UPDATE_PARAM_SAMPLE_INTERVAL, check the parameters changed and if so update
+		if (index % UPDATE_PARAM_SAMPLE_INTERVAL == 0) {
+			//Check if fuzz or vol params have changed
+			if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
+				//Sets the volume here as it doesn't cause zipper noise
+				volVal = *volParam;
+
+				//every buffer update the fuzz val to the smoothed fuzz
+				fuzzVal = linFuzzSmoother->getNextValue();
+
+				//Refresh the sim with new parameter values
+				sim->setParams(fuzzVal, volVal);
+			}			
+		}
+
 		//get the pointer to the channel data at the index
 		float* channelData = buffer.getWritePointer(channel, index);
 		
@@ -201,7 +206,10 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		//process the data
 		sim->processSample(channelData, DEFAULT_VCC);
 
+		//Scale the output signal back up to useable level
 		*channelData *= OUTPUT_SCALAR;
+		//For the first INITIALISATION_GRACE_PERIOD number of samples, fade in the volume to reduce pop when the plugin is first instantiated
+
 	}
 }
 
@@ -229,20 +237,9 @@ void FuzzFaceJuceAudioProcessor::timerCallback()
 {
 	//Set the gainVal to the value from the slider in dB
 	gainVal = pow(10,(*gainParam/10));
+	//Every timer callback set the new target fuzz val to the current setting on the knob
 
-	//Set the fuzzVal here for now
-	fuzzVal = smoothFuzz(*fuzzParam);
-
-}
-
-double FuzzFaceJuceAudioProcessor::smoothVol(double input) {
-	volVal = SMOOTH_COEFF * (volVal - input) + input;
-	return volVal;
-}
-
-double FuzzFaceJuceAudioProcessor::smoothFuzz(double input) {
-	fuzzVal = SMOOTH_COEFF * (fuzzVal - input) + input;
-	return fuzzVal;
+	linFuzzSmoother->setValue(*fuzzParam);
 }
 
 //==============================================================================
