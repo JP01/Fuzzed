@@ -10,8 +10,6 @@ Simulation::Simulation(double _sampleRate, double _vcc) : Circuit(_sampleRate)
 	//set vcc to _vcc
 	vcc = _vcc;
 
-	//Sets up the statespace matrices used in the simulation
-	refreshAll();
 
 	//Initialise the matrices used in simulation
 	initialiseSimulationParameters();
@@ -22,33 +20,8 @@ Simulation::Simulation(double _sampleRate, double _vcc) : Circuit(_sampleRate)
 }
 
 
-void Simulation::refreshAll()
-{
-	//Calls the Circuit method to refresh Circuit Vals
-	refreshFullCircuit();
-
-	//Sets up the state space matrices
-	simStateSpaceA = getStateSpaceMatrix("A");
-	simStateSpaceB = getStateSpaceMatrix("B");
-	simStateSpaceC = getStateSpaceMatrix("C");
-	simStateSpaceD = getStateSpaceMatrix("D");
-	simStateSpaceE = getStateSpaceMatrix("E");
-	simStateSpaceF = getStateSpaceMatrix("F");
-	simStateSpaceG = getStateSpaceMatrix("G");
-	simStateSpaceH = getStateSpaceMatrix("H");
-	
-	simPSI = getNonlinearFunctionMatrix("psi");
-	simAlteredStateSpaceK = getNonlinearFunctionMatrix("alteredStateSpaceK");
-	simNonLinEquationMatrix = getNonlinearFunctionMatrix("nonLinEquationMatrix");
-
-	simSaturationCurrent = getSaturationCurrent();
-	simThermalVoltage = getThermalVoltage();
-
-}
-
 //Initialise the matrices used in the simulation
 void Simulation::initialiseSimulationParameters() {
-
 	//Set up a 3x1 vector stateVector and set all vals to 0 - xz
 	stateSpaceVectorMem.setZero();
 
@@ -62,14 +35,10 @@ void Simulation::initialiseSimulationParameters() {
 //Get the system to steady state ready for processing
 void Simulation::getSteadyState() {
 	//zero input used as signal for warmup phase / getSteadyState
-	float* zeroInput;
-
-	//setup the zero input 
-	float zero = ZERO_INPUT;
-	zeroInput = &zero;
+	float* zeroInput = new float(ZERO_INPUT);
 
 	//hanWin value is used to get to steady state
-	hanWin = (int) ceil(durfade * sampleRate);
+	hanWin = (int)ceil(durfade * sampleRate);
 
 	//TM = 1./hanWin	
 	//Declare the variable TM used in the time vector
@@ -123,7 +92,7 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 
 	//Prepare the nonlinear solver
 	//pd = Kdinv*(G*xz + H*u);
-	nonLinSolverInput = (simAlteredStateSpaceK.inverse())*(simStateSpaceG*stateSpaceVectorMem + simStateSpaceH*inputVector); //define input to the Nonlinear equation --- MATLAB pd
+	nonLinSolverInput = (alteredStateSpaceK.inverse())*(stateSpaceG*stateSpaceVectorMem + stateSpaceH*inputVector); //define input to the Nonlinear equation --- MATLAB pd
 
 	nonLinVoltageVector = nonLinVoltageVectorMem; //sets the nonlinVoltageVector as the memorised vector vd = vdz
 
@@ -134,18 +103,18 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 	while (nrms > tols && iteration < maxIterations) {
 
 		//TERM = IS*exp(vd/VT);
-		calcTemp = simSaturationCurrent * (nonLinVoltageVector / simThermalVoltage).array().exp();
+		calcTemp = saturationCurrent * (nonLinVoltageVector / thermalVoltage).array().exp();
 		//f = TERM - IS;
-		nonLinTransistorFunction = calcTemp.array() - simSaturationCurrent;
+		nonLinTransistorFunction = calcTemp.array() - saturationCurrent;
 		//fd = diag(TERM/VT);
-		nonLinTransistorFunctionAltered = (calcTemp / simThermalVoltage).asDiagonal();
+		nonLinTransistorFunctionAltered = (calcTemp / thermalVoltage).asDiagonal();
 		//g = M*vd + f - pd;
-		nodalDKNonlinearG = (simNonLinEquationMatrix * nonLinVoltageVector)  //M*vd
+		nodalDKNonlinearG = (nonLinEquationMatrix * nonLinVoltageVector)  //M*vd
 			+ nonLinTransistorFunction                           //+ f
 			- nonLinSolverInput;                                 //- pd              
 
 																 //gd = M + fd;
-		nodalDKNonlinearGAltered = simNonLinEquationMatrix + nonLinTransistorFunctionAltered;
+		nodalDKNonlinearGAltered = nonLinEquationMatrix + nonLinTransistorFunctionAltered;
 		//STEP = gd\g;
 		newtonStep = nodalDKNonlinearGAltered.inverse() * nodalDKNonlinearG;
 
@@ -153,8 +122,8 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 		nonLinVoltageVectorNew = nonLinVoltageVector - newtonStep;
 
 		//gnew = M*vdnew + IS*(exp(vdnew/VT) - 1) - pd;
-		nodalDKNonlinearGNew = (simNonLinEquationMatrix * nonLinVoltageVectorNew) +                            //M*vdnew + 
-			(simSaturationCurrent* ((nonLinVoltageVectorNew / simThermalVoltage).array().exp() - 1).matrix())    //IS*(exp(vdnew/VT) - 1)
+		nodalDKNonlinearGNew = (nonLinEquationMatrix * nonLinVoltageVectorNew) +                            //M*vdnew + 
+			(saturationCurrent* ((nonLinVoltageVectorNew / thermalVoltage).array().exp() - 1).matrix())    //IS*(exp(vdnew/VT) - 1)
 			- nonLinSolverInput;                                                                               //-pd
 
 																											   //m = 0
@@ -173,8 +142,8 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 			nonLinVoltageVectorNew = nonLinVoltageVector - newtonStepTemp;
 
 			//gnew = M*vdnew + IS*(exp(vdnew/VT) - 1) - pd;
-			nodalDKNonlinearGNew = (simNonLinEquationMatrix * nonLinVoltageVectorNew) +                             //M*vdnew + 
-				(simSaturationCurrent* ((nonLinVoltageVectorNew / simThermalVoltage).array().exp() - 1).matrix())   //IS*(exp(vdnew/VT) - 1)
+			nodalDKNonlinearGNew = (nonLinEquationMatrix * nonLinVoltageVectorNew) +                             //M*vdnew + 
+				(saturationCurrent* ((nonLinVoltageVectorNew / thermalVoltage).array().exp() - 1).matrix())   //IS*(exp(vdnew/VT) - 1)
 				- nonLinSolverInput;                                                                                //-pd																							  
 		}
 		//nrms = STP'*STP;
@@ -189,10 +158,10 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 	}
 
 	//Update nonlinear currents, state and output
-	nonLinearCurrent = simPSI * (simSaturationCurrent*((nonLinVoltageVector / simThermalVoltage).array().exp() - 1).matrix());     //  i = PSI*(IS*(exp(vd/VT) - 1));
-	stateSpaceVector = (simStateSpaceA * stateSpaceVectorMem) + (simStateSpaceB*inputVector) + (simStateSpaceC*nonLinearCurrent);  //  x = A*xz + B*u + C*i;
-	output = ((simStateSpaceD*stateSpaceVectorMem) + (simStateSpaceE*inputVector) + (simStateSpaceF*nonLinearCurrent))(0);         //  y = D*xz + E*u + F*i 
-																																   //when declaring output  = RHS, the RHS is technically an Eigen Vector of size 1x1, so you must use the (0) to select the value at index 0
+	nonLinearCurrent = psi * (saturationCurrent*((nonLinVoltageVector / thermalVoltage).array().exp() - 1).matrix());     //  i = PSI*(IS*(exp(vd/VT) - 1));
+	stateSpaceVector = (stateSpaceA * stateSpaceVectorMem) + (stateSpaceB*inputVector) + (stateSpaceC*nonLinearCurrent);  //  x = A*xz + B*u + C*i;
+	output = ((stateSpaceD*stateSpaceVectorMem) + (stateSpaceE*inputVector) + (stateSpaceF*nonLinearCurrent))(0);         //  y = D*xz + E*u + F*i 
+																														  //when declaring output  = RHS, the RHS is technically an Eigen Vector of size 1x1, so you must use the (0) to select the value at index 0
 
 	stateSpaceVectorMem = stateSpaceVector;  //xz = x;   Memorise the stateSpaceVector
 	nonLinVoltageVectorMem = nonLinVoltageVector; //vdz = vd;   Memorise the nonLinVoltageVector
@@ -205,7 +174,7 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 void Simulation::setParams(double _fuzzVal, double _volVal) {
 	Circuit::setParams(_fuzzVal, _volVal);
 	//Refresh the system with updated values
-	refreshAll();
+	refreshFullCircuit();
 }
 
 //Set the sampleRate and return the system to steady state
@@ -215,7 +184,7 @@ void Simulation::setSimSampleRate(double _sampleRate)
 	sampleRate = _sampleRate;
 
 	//Sets up the statespace matrices used in the simulation
-	refreshAll();
+	refreshFullCircuit();
 
 	//Initialise the matrices used in simulation
 	initialiseSimulationParameters();
@@ -228,4 +197,5 @@ void Simulation::setSimSampleRate(double _sampleRate)
 //Default Destructor
 Simulation::~Simulation()
 {
+	std::cout << "end sim" << std::endl;
 }

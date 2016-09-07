@@ -34,16 +34,13 @@ public:
 
 	//Method to set the fuzz and vol params to the arguement vals and then refresh the system.
 	void setParams(double _fuzzVal, double _volVal);
-	
+
 	//Gets the system to a steady state ready for processing
 	void getSteadyState();
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW //Aligns all the Eigen Members in the class to avoid memory allocation errors... see https://eigen.tuxfamily.org/dox/group__TopicUnalignedArrayAssert.html & https://eigen.tuxfamily.org/dox/group__TopicStructHavingEigenMembers.html
 
 private:
-	//Refresh all the circuit values and setup the statespace matrices used in the simulation
-	void refreshAll();
-
 	//Buffer size in samples, defaulted to...??
 	int bufferSize;
 
@@ -56,7 +53,7 @@ private:
 
 	Eigen::VectorXd win; //hanning window
 	Eigen::VectorXd vccv; //power up voltage used in initial setup
-	
+
 	const double maxIterations = MAX_ITERATIONS;
 	const double maxSubIterations = MAX_SUB_ITERATIONS;
 
@@ -64,19 +61,6 @@ private:
 	const double tol = TOL;
 	//tol^2, used for end conditions of the NR solver
 	const double tols = tol*tol;
-
-
-	StateSpaceA simStateSpaceA;
-	StateSpaceB simStateSpaceB;
-	StateSpaceC simStateSpaceC;
-	StateSpaceD simStateSpaceD;
-	StateSpaceE simStateSpaceE;
-	StateSpaceF simStateSpaceF;
-	StateSpaceG simStateSpaceG;
-	StateSpaceH simStateSpaceH;
-	NonlinearFunctionMatrix simPSI, simAlteredStateSpaceK, simNonLinEquationMatrix;
-
-	double simSaturationCurrent, simThermalVoltage;
 
 
 	/*Simulation Preparations*/
@@ -111,7 +95,7 @@ private:
 
 	Eigen::Vector4d calcTemp; //temporary term used in simulation calculation (MATLAB - TERM)
 
-							  //initialise and zero all the simulation paramaters and vectors
+	//initialise and zero all the simulation paramaters and vectors
 	void initialiseSimulationParameters();
 
 	//Eigen::Vector2d outputVector;

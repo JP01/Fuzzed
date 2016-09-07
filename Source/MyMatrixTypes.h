@@ -9,6 +9,8 @@ const int numCap = 3;  //Number of Capacitors
 const int numInputs = 2;  //Number of inputs
 const int numNonLin = 4; //Number of nonlinearities
 const int numOutputs = 1; //Number of outputs
+const int numPot = 4; //Number of potentiometers 
+
 
 /*Define the matrix types for use throughout the Circuit class, predefined to reduce use of Eigen::Dynamic */
 //Circuit and System matrices
@@ -16,10 +18,13 @@ typedef Eigen::Matrix<double, numOutputs, numRes> ResMatrix; //used for resistor
 typedef Eigen::Matrix<double, numRes, numRes> DiagRes;       // used for diagonal resistor matrix
 typedef Eigen::Matrix<double, numOutputs, numCap> CapMatrix; //used for capacitor
 typedef Eigen::Matrix<double, numCap, numCap> DiagCap; //used for diagonal capacitor
+typedef Eigen::Matrix<double, numOutputs, numPot> PotMatrix; //used for the potentiometers
+typedef Eigen::Matrix<double, numPot, numPot> DiagPot; //diagonal used for the potentiometers
 typedef Eigen::Matrix<double, numNodes, numNodes> IntermediateSystemMatrix; //intermediate  matrix used for calculating system matrix
 typedef Eigen::Matrix<double, numNodes + numInputs, numNodes + numInputs> SystemMatrix; //used for the system matrix
 
-																						//Incident Matrices
+ //Incident Matrices
+typedef Eigen::Matrix<double, numPot, numNodes> IncidentPot; //used for the potentiometers																
 typedef Eigen::Matrix<double, numRes, numNodes> IncidentRes; //used for the incident resistor matrix
 typedef Eigen::Matrix<double, numCap, numNodes> IncidentCap; //used for the incident capacitor matrix 
 typedef Eigen::Matrix<double, numInputs, numNodes> IncidentVoltage; //used for the incident voltage matrix
@@ -31,8 +36,9 @@ typedef Eigen::Matrix<double, numCap, numNodes + numInputs> PaddedCap; //used fo
 typedef Eigen::Matrix<double, numNonLin, numNodes + numInputs> PaddedNonLin; //used for padded NonLin matrix in state space calcultions
 typedef Eigen::Matrix<double, numOutputs, numNodes + numInputs> PaddedOutput; //used for padded output matrix in state space calcultions
 typedef Eigen::Matrix<double, numInputs, numNodes + numInputs> PaddedInput; //used for padded input matrix in state space calcultions
+typedef Eigen::Matrix<double, numPot, numNodes + numInputs> PaddedPot; //Padded potentiometer used in calculation of state space matrices
 
-																			//State Space Function Matrices
+//State Space Function Matrices
 typedef Eigen::Matrix<double, numCap, numCap> StateSpaceA;
 typedef Eigen::Matrix<double, numCap, numInputs> StateSpaceB;
 typedef Eigen::Matrix<double, numCap, numNonLin> StateSpaceC;
@@ -42,6 +48,13 @@ typedef Eigen::Matrix<double, numOutputs, numNonLin> StateSpaceF;
 typedef Eigen::Matrix<double, numNonLin, numCap> StateSpaceG;
 typedef Eigen::Matrix<double, numNonLin, numInputs> StateSpaceH;
 typedef Eigen::Matrix<double, numNonLin, numNonLin> StateSpaceK;
+
+//Constant statespace terms
+typedef Eigen::Matrix<double, numPot, numPot> StateSpaceQ;
+typedef Eigen::Matrix<double, numCap, numPot> StateSpaceUx;
+typedef Eigen::Matrix<double, numOutputs, numPot> StateSpaceUo;
+typedef Eigen::Matrix<double, numNonLin, numPot> StateSpaceUn;
+typedef Eigen::Matrix<double, numInputs, numPot> StateSpaceUu;
 
 //Nonlinear function matrices
 typedef Eigen::Matrix<double, numNonLin, numNonLin> NonlinearFunctionMatrix;

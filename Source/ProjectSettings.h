@@ -8,7 +8,7 @@ namespace constants {
 
 
 	//Controls the min and max param values
-	const double CTRL_INCREMENT = 0.005; //The increment of the control knobs
+	const double CTRL_INCREMENT = 0.01; //The increment of the control knobs
 	const double CTRL_MIN = 0; //The minimum ctrl parameter value
 	const double CTRL_MAX = 1; //The maximum ctrl parameter
 	const double SLIDER_SENS = 400; //Controls the sensitivty of the sliders, Higher number = lower sensitivity
@@ -55,7 +55,7 @@ namespace constants {
 
 	//Defaults for the Simulation cpp
 	const double DEFAULT_VCC = 8.1;  // default value for the voltage power supply, 90% of 9v = 8.1v for more realism
-	const float ZERO_INPUT = 0;  // zero input used for getting the system to steady state
+	const float ZERO_INPUT = 0.;  // zero input used for getting the system to steady state
 	const double DURFADE = 0.1;   //duration of the faded power supply used for steady state
 	const double STEADY_STATE_FACTOR = 4.5;  //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
 	const int MAX_ITERATIONS = 100;  //Maximum number of iterations for the newton raphson solver
