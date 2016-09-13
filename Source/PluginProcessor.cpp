@@ -171,6 +171,8 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	//Process Samples		 
 	for (int index = 0; index < numberOfSamples; ++index)
 	{	
+
+
 		//each UPDATE_PARAM_SAMPLE_INTERVAL, check the parameters changed and if so update
 		if (index % UPDATE_PARAM_SAMPLE_INTERVAL == 0) {
 			//Check if fuzz or vol params have changed
@@ -209,6 +211,12 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 
 		//Scale the output signal back up to useable level
 		*channelData *= OUTPUT_SCALAR;
+
+		//Remove the pop by ramping up the output over STARTUP period of samples
+		if (sampleIndex < STARTUP) {
+			*channelData *= 1 / (STARTUP - sampleIndex);
+			sampleIndex++;
+		}
 
 		//Make both channels produce same output: ie convert back to "stereo"
 		*channelDataR = *channelData;

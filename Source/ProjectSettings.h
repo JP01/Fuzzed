@@ -31,6 +31,8 @@ namespace constants {
 
 	const double CLIPPING_FILTER_CUTOFF = 140; //The cutoff in hz of the clipping filter for filtering the clipped signal
 	
+	const int STARTUP = 9500; //Number of samples used for the ramped output volume when the plugin is first instantiated.  (This will ramp input from 1/9500 -> 1/1 * output)
+
 	//timer freq for the UI updater in hz
 	const int UI_TIMER_FREQ = 300;
 	//timer freq for the param updater in hz
@@ -70,5 +72,6 @@ namespace constants {
 	const int MAX_ITERATIONS = 90;  //Maximum number of iterations for the newton raphson solver
 	const int MAX_SUB_ITERATIONS = 10;  //maximum number of subiterations for the damped newton raphson solver
 	const double TOL = 1e-10;  //error tolerance of the system
+
 
 }

@@ -92,6 +92,9 @@ private:
 	//Input scaling, including a clipper  used to limit the max input to signal and avoid crashes
 	void inputScaling(float* _channelData);
 
+	//Used to determine if the current sample is within the muted startup period 
+	int sampleIndex = 0;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FuzzFaceJuceAudioProcessor)
 
