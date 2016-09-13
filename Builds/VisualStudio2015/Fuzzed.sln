@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2015
+Project("{2AA629C6-3A0C-FAE7-91A7-644F735CDC58}") = "Fuzzed", "Fuzzed.vcxproj", "{BD48DEAA-3F33-F4A2-0F4B-0A7C72159527}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD48DEAA-3F33-F4A2-0F4B-0A7C72159527}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BD48DEAA-3F33-F4A2-0F4B-0A7C72159527}.Debug|Win32.Build.0 = Debug|Win32
+		{BD48DEAA-3F33-F4A2-0F4B-0A7C72159527}.Release|Win32.ActiveCfg = Release|Win32
+		{BD48DEAA-3F33-F4A2-0F4B-0A7C72159527}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

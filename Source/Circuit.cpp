@@ -22,7 +22,7 @@ Circuit::Circuit(double _sampleRate) :samplePeriod(1. / _sampleRate) {
 
 }
 
-/* Initial setup of default circuit values and parmaters*/
+/* Initial setup of default circuit values and parameters*/
 void Circuit::setupCircuit() {
 	/* Setup */
 	//Populate circuit matrices
@@ -31,6 +31,8 @@ void Circuit::setupCircuit() {
 	initialiseIncidentMatrices();
 	//Populate the constant system matrix
 	populateConstantSystemMatrix();
+	//Populate the constant statespace terms
+	populateConstantStateSpaceTerms();
 	//Initialise the system matrices
 	refreshFullCircuit();
 }

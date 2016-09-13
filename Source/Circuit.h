@@ -97,7 +97,7 @@ private: //access control
 	//Resistors Values
 	const double r1 = 33e3;
 	const double r2 = 8.2e3;
-	const double r3 = 330;
+	const double r3 = 470;
 	const double r4 = 2 * volPotRes;
 	const double r5 = 2 * volPotRes;
 	const double r6 = 100e3;

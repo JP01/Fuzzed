@@ -35,7 +35,10 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 	//Default the samplerate
 	currentSampleRate = DEFAULT_SR;
 
+	//Set the smoothing times
 	linFuzzSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
+	linVolSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
+	linGainSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -98,8 +101,6 @@ void FuzzFaceJuceAudioProcessor::changeProgramName (int index, const String& new
 //==============================================================================
 void FuzzFaceJuceAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-	//Get the system into steady state in preperation for processing
-	//sim->getSteadyState();
 }
 
 void FuzzFaceJuceAudioProcessor::releaseResources()
@@ -142,9 +143,6 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	const int totalNumInputChannels = getTotalNumInputChannels();
 	const int totalNumOutputChannels = getTotalNumOutputChannels();
 
-	//Set the channel to 0 as the plugin is mono
-	const int channel = 0;
-
 	// In case we have more outputs than inputs, this code clears any output
 	// channels that didn't contain input data, (because these aren't
 	// guaranteed to be empty - they may contain garbage).
@@ -161,18 +159,15 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		currentSampleRate = getSampleRate();
 		//sets the simulation samplerate to current samplerate from DAW
 		sim->setSimSampleRate(currentSampleRate);	
+		//update the smoothing times
+		linFuzzSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
+		linVolSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
+		linGainSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
 
 	}
 		
 //===========================================================================================
 
-	//Check if the gainVal matches the parameter and update
-	if (gainVal = pow(10, (*gainParam / 10))) {
-		//Apply gain to the sample
-		//buffer.applyGain(gainVal);
-	}
-
-//===========================================================================================
 	//Process Samples		 
 	for (int index = 0; index < numberOfSamples; ++index)
 	{	
@@ -180,36 +175,43 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		if (index % UPDATE_PARAM_SAMPLE_INTERVAL == 0) {
 			//Check if fuzz or vol params have changed
 			if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
-				//Sets the volume here as it doesn't cause zipper noise
-				volVal = *volParam;
 
-				//every buffer update the fuzz val to the smoothed fuzz
+				//every interval update the fuzz and vol val to the smoothed fuzz
 				fuzzVal = linFuzzSmoother->getNextValue();
-
+				volVal = linVolSmoother->getNextValue();
 				//Refresh the sim with new parameter values
 				sim->setParams(fuzzVal, volVal);
 			}			
 		}
 
 		//get the pointer to the channel data at the index
-		float* channelData = buffer.getWritePointer(channel, index);
+		float* channelData = buffer.getWritePointer(0, index);
+		float* channelDataR = buffer.getWritePointer(1, index);
+
+		//Sum the channels to make mono
+		*channelData += *channelDataR;
+
+		
+		//Get smoothed gain val
+		gainVal = linGainSmoother->getNextValue();
 		
 		//Apply the input gain to the sample
 		*channelData *= gainVal;
-
+		
+		//Update the variable for displaying the input signal label/meter
+		currentInput = abs(*channelData);
+	
 		//Scale the signal for input to the system and clip the signal if outside allowable range
 		inputScaling(channelData);
-
-		//Update the double for displaying the input signal label
-		currentInput = abs(*channelData);
-
+			
 		//process the data
 		sim->processSample(channelData, DEFAULT_VCC);
 
 		//Scale the output signal back up to useable level
 		*channelData *= OUTPUT_SCALAR;
-		//For the first INITIALISATION_GRACE_PERIOD number of samples, fade in the volume to reduce pop when the plugin is first instantiated
 
+		//Make both channels produce same output: ie convert back to "stereo"
+		*channelDataR = *channelData;
 	}
 }
 
@@ -235,11 +237,11 @@ void FuzzFaceJuceAudioProcessor::inputScaling(float* _channelData) {
 //Call this method at P_TIMER_FREQ hz to update the circuit param vals
 void FuzzFaceJuceAudioProcessor::timerCallback() 
 {
-	//Set the gainVal to the value from the slider in dB
-	gainVal = pow(10,(*gainParam/10));
-	//Every timer callback set the new target fuzz val to the current setting on the knob
-
+	//Every timer callback set the new target parameter val to the current setting on the knob
 	linFuzzSmoother->setValue(*fuzzParam);
+	linVolSmoother->setValue(*volParam);
+	//for decibel conversion
+	linGainSmoother->setValue(pow(10, (*gainParam / 10)));
 }
 
 //==============================================================================

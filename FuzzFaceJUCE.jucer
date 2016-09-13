@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="OvywMk" name="FuzzFaceJUCE" projectType="audioplug" version="1.0.0"
-              bundleIdentifier="com.JPMACKEL.FuzzFaceJUCE" includeBinaryInAppConfig="1"
+              bundleIdentifier="com.JPMACKEL.Fuzzed" includeBinaryInAppConfig="1"
               buildVST="1" buildVST3="0" buildAU="0" buildAUv3="0" buildRTAS="0"
-              buildAAX="0" pluginName="FuzzFaceJUCE" pluginDesc="FuzzFaceJUCE"
+              buildAAX="0" pluginName="Fuzzed330" pluginDesc="Analogue Modelling Distortion Plugin based on the Fuzz Face guitar pedal"
               pluginManufacturer="JP Mackel" pluginManufacturerCode="JPM" pluginCode="FfJP"
-              pluginChannelConfigs="{1,1}" pluginIsSynth="0" pluginWantsMidiIn="1"
+              pluginChannelConfigs="{2,2}" pluginIsSynth="0" pluginWantsMidiIn="1"
               pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="FuzzFaceJUCEAU" pluginRTASCategory="" aaxIdentifier="com.yourcompany.FuzzFaceJUCE"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.2.3"
@@ -30,15 +30,17 @@
     <FILE id="UJqkZ9" name="Simulation.h" compile="0" resource="0" file="Source/Simulation.h"/>
     <FILE id="y0fSJU" name="ProjectSettings.h" compile="0" resource="0"
           file="Source/ProjectSettings.h"/>
-    <FILE id="blIBDh" name="myKnobStrip.png" compile="0" resource="1" file="../../../../../Pictures/myKnobStrip.png"/>
+    <FILE id="gidDSE" name="paramKnob.png" compile="0" resource="1" file="Assets/paramKnob.png"/>
+    <FILE id="BEVQmX" name="gainKnob.png" compile="0" resource="1" file="Assets/gainKnob.png"/>
+    <FILE id="hj1vzo" name="meterLight.png" compile="0" resource="1" file="Assets/meterLight.png"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2015 targetFolder="Builds/VisualStudio2015" vstFolder="">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="FuzzFaceJUCE"/>
+                       isDebug="1" optimisation="1" targetName="Fuzzed"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="FuzzFaceJUCE" headerPath="C:\Users\the_m\Desktop\Masters Project Docs\PluginCreation\Libraries\EigenLibraries"
+                       isDebug="0" optimisation="3" targetName="Fuzzed" headerPath="C:\Users\the_m\Desktop\Masters Project Docs\PluginCreation\Libraries\EigenLibraries"
                        useRuntimeLibDLL="0" characterSet="Unicode" alwaysGenerateDebugSymbols="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

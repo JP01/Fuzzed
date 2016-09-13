@@ -4190,7 +4190,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\..\Pictures\myKnobStrip.png">
+    <None Include="..\..\Assets\paramKnob.png">
+      <Filter>FuzzFaceJUCE</Filter>
+    </None>
+    <None Include="..\..\Assets\gainKnob.png">
+      <Filter>FuzzFaceJUCE</Filter>
+    </None>
+    <None Include="..\..\Assets\meterLight.png">
       <Filter>FuzzFaceJUCE</Filter>
     </None>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_formats\codecs\flac\Flac Licence.txt">

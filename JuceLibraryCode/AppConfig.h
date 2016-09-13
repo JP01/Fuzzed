@@ -245,10 +245,10 @@
  #define JucePlugin_Build_STANDALONE       0
 #endif
 #ifndef  JucePlugin_Name
- #define JucePlugin_Name                   "FuzzFaceJUCE"
+ #define JucePlugin_Name                   "Fuzzed"
 #endif
 #ifndef  JucePlugin_Desc
- #define JucePlugin_Desc                   "FuzzFaceJUCE"
+ #define JucePlugin_Desc                   "Analogue Modelling Distortion Plugin based on the Fuzz Face guitar pedal"
 #endif
 #ifndef  JucePlugin_Manufacturer
  #define JucePlugin_Manufacturer           "JP Mackel"
@@ -311,7 +311,7 @@
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.JPMACKEL.FuzzFaceJUCE
+ #define JucePlugin_CFBundleIdentifier     com.JPMACKEL.Fuzzed
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_None
@@ -347,13 +347,13 @@
  #define JucePlugin_AAXDisableMultiMono    0
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
- #define JucePlugin_MaxNumInputChannels    1
+ #define JucePlugin_MaxNumInputChannels    2
 #endif
 #ifndef  JucePlugin_MaxNumOutputChannels
- #define JucePlugin_MaxNumOutputChannels   1
+ #define JucePlugin_MaxNumOutputChannels   2
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {1,1}
+ #define JucePlugin_PreferredChannelConfigurations  {2,2}
 #endif
 
 #endif  // __JUCE_APPCONFIG_OVYWMK__

@@ -34,9 +34,13 @@ public:
 	ScopedPointer<AudioParameterFloat> fuzzParam;
 	ScopedPointer<AudioParameterFloat> gainParam;
 
+	//The actual values for the parameters
 	double volVal, fuzzVal, gainVal;
 
+	//Parameter smoothing
 	ScopedPointer<LinearSmoothedValue<double>> linFuzzSmoother = new LinearSmoothedValue<double>;
+	ScopedPointer<LinearSmoothedValue<double>> linVolSmoother = new LinearSmoothedValue<double>;
+	ScopedPointer<LinearSmoothedValue<double>> linGainSmoother = new LinearSmoothedValue<double>;
 
 	//value for currentSampleRate
 	double currentSampleRate;
