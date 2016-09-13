@@ -87,9 +87,8 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	: AudioProcessorEditor(&p), processor(p),
 	gainLabel(String::empty, "Input Gain"),
 	volLabel(String::empty, "Vol"),
-	fuzzLabel(String::empty, "Fuzz"),
+	fuzzLabel(String::empty, "Fuzz")
 	
-
 {
 	//Add the sliders to the editor
 	//Adds the input gain slider
