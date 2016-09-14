@@ -169,7 +169,7 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	meterSlider->setValue(METER_MIN); //default the value to min
 	
 	readingSmooth = METER_MIN;//initialise the smoothed reading value here
-	double smoothingCoeff = exp(log(0.01f) / (100 * P_TIMER_FREQ*0.001)); //initialise the smoothing coefficient used for reading smoothing
+	smoothingCoeff = exp(log(0.01f) / (100 * P_TIMER_FREQ*0.001)); //initialise the smoothing coefficient used for reading smoothing
 
 	//The window should not be resizable
 	setResizable(false, false);
