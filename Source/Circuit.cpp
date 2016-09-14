@@ -301,6 +301,7 @@ double Circuit::getVol()
 void Circuit::setParams(double _fuzzVal, double _volVal) {
 	setFuzz(_fuzzVal);
 	setVol(_volVal);
+	refreshFullCircuit();
 }
 
 /* Returns the circuit saturation current IS */

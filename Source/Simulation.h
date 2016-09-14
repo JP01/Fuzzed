@@ -31,10 +31,6 @@ public:
 	//channelData is used as the name to be implemented with JUCE API channelData variable name
 	void processSample(float* channelData, double _vcc);
 
-
-	//Method to set the fuzz and vol params to the arguement vals and then refresh the system.
-	void setParams(double _fuzzVal, double _volVal);
-
 	//Gets the system to a steady state ready for processing
 	void getSteadyState();
 

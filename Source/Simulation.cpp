@@ -170,13 +170,6 @@ void Simulation::processSample(float* _channelData, double _vcc) {
 	//return output; //returns the processed sample
 }
 
-//Method to set the fuzz and vol params to the arguement vals and then refresh the system.
-void Simulation::setParams(double _fuzzVal, double _volVal) {
-	Circuit::setParams(_fuzzVal, _volVal);
-	//Refresh the system with updated values
-	refreshFullCircuit();
-}
-
 //Set the sampleRate and return the system to steady state
 void Simulation::setSimSampleRate(double _sampleRate)
 {
