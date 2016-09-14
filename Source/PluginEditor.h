@@ -45,7 +45,7 @@ private:
 	ScopedPointer<MyLookAndFeel> meterLookAndFeel = new MyLookAndFeel(METER);
 	ScopedPointer<Slider> meterSlider = new Slider();
 	double readingSmooth; //smoothed reading value
-
+	double smoothingCoeff; //the smoothing coefficient used for parameter smoothing of the VU meter
 
 	// This reference is provided as a quick way for your editor to
 	// access the processor object that created it.
