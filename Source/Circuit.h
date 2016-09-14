@@ -10,8 +10,6 @@ using namespace constants;
 class Circuit
 {
 public: //access control
-	const double minCTRL = CTRL_MIN; //Sets the minimum allowable value for the parameters
-	const double maxCTRL = CTRL_MAX; //sets the maximum allowable value for the parameters
 
 	//Default Constructor
 	Circuit();

@@ -162,11 +162,14 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	meterSlider->setSliderStyle(Slider::Rotary);  //sliderstyle rotary
 	meterSlider->setRange(METER_MIN, METER_MAX, METER_UPDATE_RATE); //slider range
 	meterSlider->setEnabled(false);  //disables the slider so it cannot be clicked
-	meterSlider->setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
-	meterSlider->setPopupDisplayEnabled(false, this);
-	meterSlider->setSkewFactor(METER_MAX/(abs(METER_MIN)+METER_MAX));
+	meterSlider->setTextBoxStyle(Slider::NoTextBox, false, 90, 0); //no text display
+	meterSlider->setPopupDisplayEnabled(false, this); //no popup
+	meterSlider->setSkewFactor(METER_MAX/(abs(METER_MIN)+METER_MAX)); //skew the slider setting logarithmically
 	meterSlider->setLookAndFeel(meterLookAndFeel); //set up the look and feel of the slider
-	meterSlider->setValue(METER_MIN);
+	meterSlider->setValue(METER_MIN); //default the value to min
+	
+	readingSmooth = METER_MIN;//initialise the smoothed reading value here
+	double smoothingCoeff = exp(log(0.01f) / (100 * P_TIMER_FREQ*0.001)); //initialise the smoothing coefficient used for reading smoothing
 
 	//The window should not be resizable
 	setResizable(false, false);
@@ -185,44 +188,33 @@ void FuzzFaceJuceAudioProcessorEditor::timerCallback()
 {
 	double currentReading = meterSlider->getValue();
 	double processorSignal = Decibels::gainToDecibels(processor.currentInput, METER_MIN);
-	
-	
-	//inputSignalLabel.setText("Input Signal: " + std::to_string(processorSignal) + " and the Current Reading: " + std::to_string(currentReading), dontSendNotification);
-	
 
-    if (processorSignal > currentReading) {
-		//increment the meter value until it reaches the processor signal
-		meterSlider->setValue(currentReading + METER_UPDATE_RATE);
-	}
-	else if (processorSignal < currentReading) {
-		//increment the meter value until it reaches the processor signal
-		meterSlider->setValue(currentReading - METER_UPDATE_RATE);
-	}
+	readingSmooth = processorSignal + smoothingCoeff * (readingSmooth - processorSignal);
 	
+	//increment the meter value until it reaches the processor signal
+	meterSlider->setValue(readingSmooth);
+
 }
 
 //==============================================================================
 void FuzzFaceJuceAudioProcessorEditor::paint (Graphics& g)
 {
-	//Set the colour for the backgroun
-	Colour colour(149,00,00);
-	//Fill the backgroun
-    g.fillAll (colour);
+	//get the background image from BinaryData
+	Image background = ImageCache::getFromMemory(BinaryData::background_png, BinaryData::background_pngSize);
+	//set the background as the image
+	g.drawImage(background, 0, 0, getWidth(), getHeight(), 0, 0, background.getWidth(), background.getHeight(), false);
 
-
-	//Set the text colour
-    g.setColour (Colours::white);
-    g.setFont (FONT_SIZE);
-    g.drawFittedText (PLUGIN_NAME, getLocalBounds(), Justification::centredTop, 1);
 }
 
 void FuzzFaceJuceAudioProcessorEditor::resized()
 {
     //Layout and size of the sliders 
-	gainSlider->setBounds(WIN_WIDTH/12, (WIN_HEIGHT/3) - FONT_SIZE, KNOB_WIDTH, KNOB_HEIGHT);
-	volSlider->setBounds((5* WIN_WIDTH)/12, (WIN_HEIGHT /3) - FONT_SIZE, KNOB_WIDTH, KNOB_HEIGHT);
-	fuzzSlider->setBounds((9* WIN_WIDTH)/12, (WIN_HEIGHT /3) - FONT_SIZE, KNOB_WIDTH, KNOB_HEIGHT);
-	meterSlider->setBounds(195, 119, 35, 35);
+	meterSlider->setBounds(88, 58, METER_LIGHT_SIZE, METER_LIGHT_SIZE);
+	gainSlider->setBounds(48, 114 , GAIN_KNOB_SIZE, GAIN_KNOB_SIZE);
+
+	volSlider->setBounds(260, 100 + FONT_SIZE, PARAM_KNOB_SIZE, PARAM_KNOB_SIZE);
+	fuzzSlider->setBounds(455, 100 + FONT_SIZE, PARAM_KNOB_SIZE, PARAM_KNOB_SIZE);
+	
 }
 
 //===========================================================

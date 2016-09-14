@@ -2456,6 +2456,7 @@
     <None Include="..\..\Assets\paramKnob.png"/>
     <None Include="..\..\Assets\gainKnob.png"/>
     <None Include="..\..\Assets\meterLight.png"/>
+    <None Include="..\..\Assets\background.png"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_formats\codecs\flac\Flac Licence.txt"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_formats\codecs\oggvorbis\Ogg Vorbis Licence.txt"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\AU\AUResources.r"/>

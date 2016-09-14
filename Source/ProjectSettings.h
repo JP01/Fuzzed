@@ -54,10 +54,11 @@ namespace constants {
 
 	//Window size of plugin
 	const int WIN_WIDTH = 600;
-	const int WIN_HEIGHT = 270;
+	const int WIN_HEIGHT = 280;
 
-	const int KNOB_WIDTH = 120;
-	const int KNOB_HEIGHT = 120;
+	const int PARAM_KNOB_SIZE = 90;
+	const int GAIN_KNOB_SIZE = 120;
+	const int METER_LIGHT_SIZE = 40;
 
 	const int TEXT_BOX_WIDTH = 65;
 	const int TEXT_BOX_HEIGHT = 16;

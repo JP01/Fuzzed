@@ -3,7 +3,7 @@
 <JUCERPROJECT id="OvywMk" name="FuzzFaceJUCE" projectType="audioplug" version="1.0.0"
               bundleIdentifier="com.JPMACKEL.Fuzzed" includeBinaryInAppConfig="1"
               buildVST="1" buildVST3="0" buildAU="0" buildAUv3="0" buildRTAS="0"
-              buildAAX="0" pluginName="Fuzzed330" pluginDesc="Analogue Modelling Distortion Plugin based on the Fuzz Face guitar pedal"
+              buildAAX="0" pluginName="Fuzzed" pluginDesc="Analogue Modelling Distortion Plugin based on the Fuzz Face guitar pedal"
               pluginManufacturer="JP Mackel" pluginManufacturerCode="JPM" pluginCode="FfJP"
               pluginChannelConfigs="{2,2}" pluginIsSynth="0" pluginWantsMidiIn="1"
               pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
@@ -33,6 +33,7 @@
     <FILE id="gidDSE" name="paramKnob.png" compile="0" resource="1" file="Assets/paramKnob.png"/>
     <FILE id="BEVQmX" name="gainKnob.png" compile="0" resource="1" file="Assets/gainKnob.png"/>
     <FILE id="hj1vzo" name="meterLight.png" compile="0" resource="1" file="Assets/meterLight.png"/>
+    <FILE id="Iup6q4" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2015 targetFolder="Builds/VisualStudio2015" vstFolder="">

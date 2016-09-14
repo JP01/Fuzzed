@@ -44,6 +44,7 @@ private:
 	//Set up the requirements for the metering
 	ScopedPointer<MyLookAndFeel> meterLookAndFeel = new MyLookAndFeel(METER);
 	ScopedPointer<Slider> meterSlider = new Slider();
+	double readingSmooth; //smoothed reading value
 
 
 	// This reference is provided as a quick way for your editor to
