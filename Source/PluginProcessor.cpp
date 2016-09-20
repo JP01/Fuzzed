@@ -171,8 +171,6 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	//Process Samples		 
 	for (int index = 0; index < numberOfSamples; ++index)
 	{	
-
-
 		//each UPDATE_PARAM_SAMPLE_INTERVAL, check the parameters changed and if so update
 		if (index % UPDATE_PARAM_SAMPLE_INTERVAL == 0) {
 			//Check if fuzz or vol params have changed
@@ -192,7 +190,6 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 
 		//Sum the channels to make mono
 		*channelData += *channelDataR;
-
 		
 		//Get smoothed gain val
 		gainVal = linGainSmoother->getNextValue();
@@ -230,7 +227,6 @@ void FuzzFaceJuceAudioProcessor::inputScaling(float* _channelData) {
 	//Scale the input Signal
 	*_channelData *= MAX_INPUT_SIG * pow(2, -INPUT_SCALAR);
 	
-
 	//Hard Clipping
 	//If signal is greater than max set it to max
 	if (*_channelData >= CLIPPING_POINT) {

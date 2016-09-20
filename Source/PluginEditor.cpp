@@ -183,10 +183,9 @@ FuzzFaceJuceAudioProcessorEditor::~FuzzFaceJuceAudioProcessorEditor()
 {
 }
 
-//Timer callback used for updating the VU meter, checks if current input is a peak and sets the meter to this peak.
+//Timer callback used for updating the VU meter, uses a smoothing coefficient to smooth changes and reduce graphical "stuttering"
 void FuzzFaceJuceAudioProcessorEditor::timerCallback()
 {
-	double currentReading = meterSlider->getValue();
 	double processorSignal = Decibels::gainToDecibels(processor.currentInput, METER_MIN);
 
 	readingSmooth = processorSignal + smoothingCoeff * (readingSmooth - processorSignal);
