@@ -1,11 +1,5 @@
 #include "Circuit.h"
 
-/*Default Constructor*/
-//Circuit::Circuit() { std::cout << "Circuit Created!" << std::endl; };
-
-/*Calls the default constructor with default 44.1k Hz sample rate */
-
-
 /*Constructor which takes sampleRate as an arguement and initialises the sampling period to 1./sampleRate */
 Circuit::Circuit(double _sampleRate) :samplePeriod(1. / _sampleRate) {
 
