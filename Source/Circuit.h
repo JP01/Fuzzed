@@ -29,9 +29,32 @@ public: //access control
 
 	//Method to set the fuzz and vol params to the arguement vals.
 	void setParams(double _fuzzVal, double _volVal);
+
+	//Declare variables for the individual elements of the matrices which cause zipper noise, where cTarget13 = C(1,3) etc.
+	double aTarget22, cTarget13, cTarget23, kTarget33, kTarget34, kTarget44;
+	//Update the values causing zipper noise with smoothed values each sample
+	void updateZipperMatrices();
+	void updateZipperTargets();
+	//the smoothed values
+	double aStore22, cStore13, cStore23, kStore33, kStore34, kStore44;
+	//the coefficient which governs the smoothing of zipper matrix values
+	double kCoeff;
+			
 	double getFuzz();                //returns the fuzz parameter
 	double getVol();                 //returns the volume parameter
 
+
+	//Declare the statespace terms and their constant elements
+	StateSpaceA stateSpaceA;
+	StateSpaceB stateSpaceB;
+	StateSpaceC stateSpaceC;
+	StateSpaceD stateSpaceD;
+	StateSpaceE stateSpaceE;
+	StateSpaceF stateSpaceF;
+	StateSpaceG stateSpaceG;
+	StateSpaceH stateSpaceH;
+	StateSpaceK stateSpaceK;
+	
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW //Aligns all the Eigen Members in the class to avoid memory allocation errors... see https://eigen.tuxfamily.org/dox/group__TopicUnalignedArrayAssert.html & https://eigen.tuxfamily.org/dox/group__TopicStructHavingEigenMembers.html
 
 protected:
@@ -43,19 +66,19 @@ protected:
 
 	void refreshFullCircuit();	//Refresh All matrices, call when paramater change needs to be implemented
 
-								//sets the samplerate and updates the matrices
+	//sets the samplerate and updates the matrices
 	void setCircuitSampleRate(double _sampleRate);
 
 	//Declare the statespace terms and their constant elements
-	StateSpaceA stateSpaceA, stateSpaceA0;
-	StateSpaceB stateSpaceB, stateSpaceB0;
-	StateSpaceC stateSpaceC, stateSpaceC0;
-	StateSpaceD stateSpaceD, stateSpaceD0;
-	StateSpaceE stateSpaceE, stateSpaceE0;
-	StateSpaceF stateSpaceF, stateSpaceF0;
-	StateSpaceG stateSpaceG, stateSpaceG0;
-	StateSpaceH stateSpaceH, stateSpaceH0;
-	StateSpaceK stateSpaceK, stateSpaceK0;
+	StateSpaceA stateSpaceA0;
+	StateSpaceB stateSpaceB0;
+	StateSpaceC stateSpaceC0;
+	StateSpaceD stateSpaceD0;
+	StateSpaceE stateSpaceE0;
+	StateSpaceF stateSpaceF0;
+	StateSpaceG stateSpaceG0;
+	StateSpaceH stateSpaceH0;
+	StateSpaceK stateSpaceK0;
 
 	//Declare the constant state space terms used in Holters method
 	StateSpaceQ stateSpaceQ;
@@ -68,10 +91,11 @@ protected:
 	double samplePeriod;
 
 	//PNP Bipolar Junction Transistor Values
-	const double forwardGain = 200;
-	const double reverseGain = 2;
-	const double thermalVoltage = 25.8e-3;
-	const double saturationCurrent = 1e-14;
+	static double forwardGain; //200 or 110
+	static double forwardGain2;
+	static double reverseGain;
+	static double thermalVoltage;
+	static double saturationCurrent;
 
 	/*
 	*   Nonlinear function matrices, set as 4x4 matrices
@@ -83,29 +107,34 @@ protected:
 
 
 private: //access control
+
+	//Initialise all the circuit values r1,r2 etc etc
+	void initialiseValues();
+
+
 	double fuzz;  //value for the fuzz parameter
 	double vol;   //value for the vol parameter
 
 
 	 //potentiometer resistances
-	const double volPotRes = 500e3;
-	const double fuzzPotRes = 1e3;
+	static double volPotRes;
+	static double fuzzPotRes;
 	double volPotVar1, volPotVar2, fuzzPotVar1, fuzzPotVar2; //Variables for the potentiometer
 
 	//Resistors Values
-	const double r1 = 33e3;
-	const double r2 = 8.2e3;
-	const double r3 = 470;
-	const double r4 = 2 * volPotRes;
-	const double r5 = 2 * volPotRes;
-	const double r6 = 100e3;
-	const double r7 = 2 * fuzzPotRes;
-	const double r8 = 2 * fuzzPotRes;
+	static double r1;
+	static double r2 ;
+	static double r3;
+	static double r4;
+	static double r5;
+	static double r6;
+	static double r7;
+	static double r8;
 
 	//Capacitors Values
-	const double c1 = 2.2e-6;
-	const double c2 = 20e-6;
-	const double c3 = 10e-9;
+	static double c1;
+	static double c2;
+	static double c3;
 
 	//Initial setup functions
 	void setupCircuit();

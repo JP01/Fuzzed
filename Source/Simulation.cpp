@@ -4,20 +4,40 @@
 //Default Constructor with default values for samplerate and vcc
 Simulation::Simulation() : Simulation(DEFAULT_SR, DEFAULT_VCC) {};
 
+
 //Constructor with Args, calls the superclass constructor with the same sampleRate
 Simulation::Simulation(double _sampleRate, double _vcc) : Circuit(_sampleRate)
 {
+	
+	//initialise sim values
+	initialiseSimValues();
+
 	//set vcc to _vcc
 	vcc = _vcc;
-
-
+	
 	//Initialise the matrices used in simulation
 	initialiseSimulationParameters();
 
 	//Get the system to a steady State
 	getSteadyState();
+	
+}
+
+void Simulation::initialiseSimValues() {
+	vcc = DEFAULT_VCC; //steady state voltage
+	durfade = DURFADE; //duration of the faded power up
+	steadyStatePeriodFactor = STEADY_STATE_FACTOR; //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
+	
+	maxIterations = MAX_ITERATIONS;
+	maxSubIterations = MAX_SUB_ITERATIONS;
+
+	//Specified tolerance in nonlinear voltage vd
+	tol = TOL;
+	//tol^2, used for end conditions of the NR solver
+	tols = tol*tol;
 
 }
+
 
 
 //Initialise the matrices used in the simulation

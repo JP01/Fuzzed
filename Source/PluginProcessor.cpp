@@ -36,9 +36,12 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 	currentSampleRate = DEFAULT_SR;
 
 	//Set the smoothing times
-	linFuzzSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
-	linVolSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
-	linGainSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
+	linFuzzSmoother->reset(currentSampleRate/UPDATE_PARAM_MAJOR, SMOOTHING_TIME_S);
+	linVolSmoother->reset(currentSampleRate / UPDATE_PARAM_MAJOR, SMOOTHING_TIME_S);
+	linGainSmoother->reset(currentSampleRate / UPDATE_PARAM_MAJOR, SMOOTHING_TIME_S);
+
+	//update the param coeff
+	paramCoeff = exp(-2.0 * PI * (PARAM_CUTOFF / (currentSampleRate / UPDATE_PARAM_MAJOR)));
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()
@@ -136,7 +139,7 @@ bool FuzzFaceJuceAudioProcessor::setPreferredBusArrangement (bool isInput, int b
 
 
 void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
-{	
+{
 	int numberOfSamples = buffer.getNumSamples();
 
 	//Declare the consts for number of channels
@@ -149,40 +152,45 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 	// This is here to avoid people getting screaming feedback
 	// when they first compile a plugin, but obviously you don't need to keep
 	// this code if your algorithm always overwrites all the output channels.
-	for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i) 
+	for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
 		buffer.clear(i, 0, buffer.getNumSamples());
 
-//===========================================================================================
+	//===========================================================================================
 
-	//If the sampleRate has changes then update the sim samplerate and clipping filter coeffs
+		//If the sampleRate has changes then update the sim samplerate and clipping filter coeffs
 	if (currentSampleRate != getSampleRate()) {
 		currentSampleRate = getSampleRate();
 		//sets the simulation samplerate to current samplerate from DAW
-		sim->setSimSampleRate(currentSampleRate);	
+		sim->setSimSampleRate(currentSampleRate);
 		//update the smoothing times
-		linFuzzSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
-		linVolSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
-		linGainSmoother->reset(currentSampleRate, SMOOTHING_TIME_S);
+		linFuzzSmoother->reset(currentSampleRate/UPDATE_PARAM_MAJOR, SMOOTHING_TIME_S);
+		linVolSmoother->reset(currentSampleRate/UPDATE_PARAM_MAJOR, SMOOTHING_TIME_S);
+		linGainSmoother->reset(currentSampleRate/UPDATE_PARAM_MAJOR, SMOOTHING_TIME_S);
+
+		//update the param coeff
+		paramCoeff = exp(-2.0 * PI * (PARAM_CUTOFF / ((currentSampleRate) / UPDATE_PARAM_MAJOR)));
 
 	}
-		
-//===========================================================================================
 
-	//Process Samples		 
+	//===========================================================================================
+
+		//Process Samples		 
 	for (int index = 0; index < numberOfSamples; ++index)
-	{	
-		//each UPDATE_PARAM_SAMPLE_INTERVAL, check the parameters changed and if so update
-		if (index % UPDATE_PARAM_SAMPLE_INTERVAL == 0) {
-			//Check if fuzz or vol params have changed
-			if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
-
+	{
+		//Check if fuzz or vol params have changed
+		if ((volVal != *volParam) || (fuzzVal != *fuzzParam)) {
+			//each UPDATE_PARAM_SAMPLE_INTERVAL, check the parameters changed and if so update
+			if (index % UPDATE_PARAM_MAJOR == 0) {
 				//every interval update the fuzz and vol val to the smoothed fuzz
-				fuzzVal = linFuzzSmoother->getNextValue();
-				volVal = linVolSmoother->getNextValue();
+				fuzzVal = (*fuzzParam)*(1.0 - paramCoeff) + fuzzVal*paramCoeff;
+				volVal = (*volParam)*(1.0 - paramCoeff) + volVal*paramCoeff;
 				//Refresh the sim with new parameter values
+				
 				sim->setParams(fuzzVal, volVal);
-			}			
+			}	
 		}
+		//Update the zipper matrices with smoothed coefficients each sample
+		sim->updateZipperMatrices();
 
 		//get the pointer to the channel data at the index
 		float* channelData = buffer.getWritePointer(0, index);
@@ -190,19 +198,19 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 
 		//Sum the channels to make mono
 		*channelData += *channelDataR;
-		
+
 		//Get smoothed gain val
 		gainVal = linGainSmoother->getNextValue();
-		
+
 		//Apply the input gain to the sample
 		*channelData *= gainVal;
-		
+
 		//Update the variable for displaying the input signal label/meter
 		currentInput = abs(*channelData);
-	
+
 		//Scale the signal for input to the system and clip the signal if outside allowable range
 		inputScaling(channelData);
-			
+
 		//process the data
 		sim->processSample(channelData, DEFAULT_VCC);
 

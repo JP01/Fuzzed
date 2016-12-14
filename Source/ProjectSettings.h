@@ -13,13 +13,13 @@ namespace constants {
 	enum KnobType { PARAM_KNOB, GAIN_KNOB, METER };
 
 	//Controls the min and max param values
-	const double CTRL_INCREMENT = 0.01; //The increment of the control knobs
-	const double CTRL_MIN = 0; //The minimum ctrl parameter value
+	const double CTRL_INCREMENT = 0.001; //The increment of the control knobs
+	const double CTRL_MIN = 0.0; //The minimum ctrl parameter value
 	const double CTRL_MAX = 1; //The maximum ctrl parameter
-	const double SLIDER_SENS = 400; //Controls the sensitivty of the sliders, Higher number = lower sensitivity
+	const double SLIDER_SENS = 500; //Controls the sensitivty of the sliders, Higher number = lower sensitivity
 
 	//Constrols the min and max input gain vals
-	const double GAIN_INCREMENT = 0.01;
+	const double GAIN_INCREMENT = 0.001;
 	const double GAIN_MIN = -6; //in db
 	const double GAIN_MAX = 6; //in db
 
@@ -29,18 +29,20 @@ namespace constants {
 	const double CLIPPING_POINT = 0.1; //if the input signal excedes this then clip to ensure system cannot crash
 	const double OUTPUT_SCALAR = 2; //Scale the output of the system back up to useable levels
 
-	const double CLIPPING_FILTER_CUTOFF = 140; //The cutoff in hz of the clipping filter for filtering the clipped signal
-	
 	const int STARTUP = 9500; //Number of samples used for the ramped output volume when the plugin is first instantiated.  (This will ramp input from 1/9500 -> 1/1 * output)
 
 	//timer freq for the UI updater in hz
-	const int UI_TIMER_FREQ = 300;
+	const int UI_TIMER_FREQ = 100;
 	//timer freq for the param updater in hz
-	const int P_TIMER_FREQ = 1000;
+	const int P_TIMER_FREQ = 100;
 	//the time in s between parameter updates
-	const double SMOOTHING_TIME_S = 0.01;
+	const double SMOOTHING_TIME_S = 0.05;
 	//controls the number of samples between parameter updates
-	const int UPDATE_PARAM_SAMPLE_INTERVAL = 16;
+	const int UPDATE_PARAM_MAJOR = 32;
+	//controls the cutoff of param changes
+	const int PARAM_CUTOFF = 4;
+	//controls the cutoff of the zipper matrix smoothing
+	const int ZIP_SMOOTH = 100;
 
 	//controls the update speed of the VU meter, smaller is faster
 	const double METER_UPDATE_RATE = 0.15;
@@ -49,7 +51,7 @@ namespace constants {
 
 	//Defaults for the parameters
 	const double GAIN_DEFAULT = 0;
-	const double FUZZ_DEFAULT = 0.01;
+	const double FUZZ_DEFAULT = 0.1;
 	const double VOL_DEFAULT = 0.4;
 
 	//Window size of plugin
@@ -72,7 +74,7 @@ namespace constants {
 	const double STEADY_STATE_FACTOR = 4.5;  //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
 	const int MAX_ITERATIONS = 90;  //Maximum number of iterations for the newton raphson solver
 	const int MAX_SUB_ITERATIONS = 10;  //maximum number of subiterations for the damped newton raphson solver
-	const double TOL = 1e-10;  //error tolerance of the system
+	const double TOL = 1e-7;  //error tolerance of the system
 
 
 }

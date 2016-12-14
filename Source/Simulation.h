@@ -37,26 +37,31 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW //Aligns all the Eigen Members in the class to avoid memory allocation errors... see https://eigen.tuxfamily.org/dox/group__TopicUnalignedArrayAssert.html & https://eigen.tuxfamily.org/dox/group__TopicStructHavingEigenMembers.html
 
 private:
+
+	//Initialise vcc etc.
+	void initialiseSimValues();
+
+
 	//Buffer size in samples, defaulted to...??
 	int bufferSize;
 
 	/* Input */
 	//VCC voltage
-	double vcc = DEFAULT_VCC; //steady state voltage
-	const double durfade = DURFADE; //duration of the faded power up
+	static double vcc; //steady state voltage
+	static double durfade; //duration of the faded power up
 	int hanWin; //length in samples of the hanning window for voltage ramping, used in the get steady state phase
-	const double steadyStatePeriodFactor = STEADY_STATE_FACTOR; //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
+	static double steadyStatePeriodFactor; //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
 
 	Eigen::VectorXd win; //hanning window
 	Eigen::VectorXd vccv; //power up voltage used in initial setup
 
-	const double maxIterations = MAX_ITERATIONS;
-	const double maxSubIterations = MAX_SUB_ITERATIONS;
+	static double maxIterations;
+	static double maxSubIterations;
 
 	//Specified tolerance in nonlinear voltage vd
-	const double tol = TOL;
+	static double tol;
 	//tol^2, used for end conditions of the NR solver
-	const double tols = tol*tol;
+	static double tols;
 
 
 	/*Simulation Preparations*/
@@ -96,6 +101,5 @@ private:
 
 	//Eigen::Vector2d outputVector;
 	double output; //output of the model (MATLAB - y)
-
 
 };

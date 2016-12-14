@@ -6,6 +6,7 @@
 /*Calls the default constructor with default 44.1k Hz sample rate */
 Circuit::Circuit() : Circuit(DEFAULT_SR) {};
 
+
 /*Constructor which takes sampleRate as an arguement and initialises the sampling period to 1./sampleRate */
 Circuit::Circuit(double _sampleRate) :samplePeriod(1. / _sampleRate) {
 
@@ -14,12 +15,58 @@ Circuit::Circuit(double _sampleRate) :samplePeriod(1. / _sampleRate) {
 
 	std::cout << "Circuit Created with SR: " << sampleRate << std::endl;
 
+	//Initialise Default circuit values
+	initialiseValues();
+
 	//Initialise controllable paramaters
 	setParams(FUZZ_DEFAULT, VOL_DEFAULT);
 
 	//Perform initial setup of the circuit
 	setupCircuit();
 
+	//initialise the zipper value smoothing coefficient
+	kCoeff = exp(-2.0 * PI * (ZIP_SMOOTH / sampleRate));
+}
+
+
+void Circuit::initialiseValues() {
+	//BJT Values
+	forwardGain = 70;
+	forwardGain2 = 110;
+	reverseGain = 2;
+	thermalVoltage = 25.8e-3;
+	saturationCurrent = 1e-14;
+
+	//Potentiometer base resistances
+	volPotRes = 500e3;
+	fuzzPotRes = 1e3;
+
+	//Resistors Values
+	r1 = 33e3;
+	r2 = 8.2e3;
+	r3 = 470;
+	r4 = 2 * volPotRes;
+	r5 = 2 * volPotRes;
+	r6 = 100e3;
+	r7 = 2 * fuzzPotRes;
+	r8 = 2 * fuzzPotRes;
+
+	//Capacitors Values
+	c1 = 2.2e-6;
+	c2 = 20e-6;
+	c3 = 10e-9;
+
+	//Initialise the psi values
+	psi << 1 / forwardGain2, 1 / reverseGain, 0, 0,
+		1, -(reverseGain + 1) / reverseGain, 0, 0,
+		0, 0, 1 / forwardGain, 1 / reverseGain,
+		0, 0, 1, -(reverseGain + 1) / reverseGain;
+
+	//Initialise the phi values
+	phi << 1, 0, 0, 0,
+		1, -1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 1, -1;
 }
 
 /* Initial setup of default circuit values and parameters*/
@@ -35,6 +82,17 @@ void Circuit::setupCircuit() {
 	populateConstantStateSpaceTerms();
 	//Initialise the system matrices
 	refreshFullCircuit();
+
+	//initialise the zipper values
+	aStore22 = stateSpaceA(1, 1);
+
+    cStore13 = stateSpaceC(0, 2);
+	cStore23 = stateSpaceC(1, 2);
+
+	kStore33 = stateSpaceK(2, 2);
+	kStore34 = stateSpaceK(2, 3);
+	kStore44 = stateSpaceK(3, 3);
+
 }
 
 /* Initial setup of circuit matrices.
@@ -215,25 +273,50 @@ void Circuit::refreshStateSpace() {
 	//K = -(K0 - Un*((R_V+Q)\(Un.')));   
 	stateSpaceK = -(stateSpaceK0 - stateSpaceUn*((diagPotMatrix + stateSpaceQ).partialPivLu().solve(stateSpaceUn.transpose())));
 
-
+	updateZipperTargets();
 }
+
+//Update the target values for the zipper matrices
+void Circuit::updateZipperTargets() {
+	//Set the target values for the zipper causing elements
+	aTarget22 = stateSpaceA(1, 1);
+
+	cTarget13 = stateSpaceC(0, 2);
+	cTarget23 = stateSpaceC(1, 2);
+
+	kTarget33 = stateSpaceK(2, 2);
+	kTarget34 = stateSpaceK(2, 3);
+	kTarget44 = stateSpaceK(3, 3);
+}
+
+//Update the values of the zipper matrices with smoothed values every sample
+void Circuit::updateZipperMatrices() {
+
+	aStore22 = aTarget22*(1. - kCoeff) + aStore22*kCoeff;
+	stateSpaceA(1, 1) = aStore22;
+
+	cStore13 = cTarget13*(1. - kCoeff) + cStore13*kCoeff;
+	stateSpaceC(0, 2) = cStore13;
+	cStore23 = cTarget23*(1. - kCoeff) + cStore23*kCoeff;
+	stateSpaceC(1, 2) = cStore23;
+
+	kStore33 = kTarget33*(1. - kCoeff) + kStore33*kCoeff;
+	stateSpaceK(2, 2) = kStore33;
+	kStore34 = kTarget34*(1. - kCoeff) + kStore34*kCoeff;
+	stateSpaceK(2, 3) = kStore34;
+	stateSpaceK(3, 2) = kStore34;
+	kStore44 = kTarget44*(1. - kCoeff) + kStore44*kCoeff;
+	stateSpaceK(3, 3) = kStore44;
+
+	//update the nonlinear functions with new K values
+	refreshNonlinearFunctions();
+}
+
 
 /* Function used to refresh the nonlinear function matrices, called by refresh() */
 void Circuit::refreshNonlinearFunctions() {
-	//Input the psi values
-	psi << 1 / forwardGain, 1 / reverseGain, 0, 0,
-		1, -(reverseGain + 1) / reverseGain, 0, 0,
-		0, 0, 1 / forwardGain, 1 / reverseGain,
-		0, 0, 1, -(reverseGain + 1) / reverseGain;
-
-	//Input the phi values
-	phi << 1, 0, 0, 0,
-		1, -1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 1, -1;
-
 	//Input the Kd values
-	alteredStateSpaceK << -stateSpaceK*psi;
+	alteredStateSpaceK = -stateSpaceK*psi;
 
 	//Input the M values
 	nonLinEquationMatrix = alteredStateSpaceK.inverse()*phi.inverse();
@@ -301,7 +384,9 @@ double Circuit::getVol()
 void Circuit::setParams(double _fuzzVal, double _volVal) {
 	setFuzz(_fuzzVal);
 	setVol(_volVal);
-	refreshFullCircuit();
+	refreshPotentiometerMatrices();
+	refreshStateSpace();
+	//refreshNonlinearFunctions();
 }
 
 /* Returns the circuit saturation current IS */

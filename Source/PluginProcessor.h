@@ -30,9 +30,7 @@ public:
 	ScopedPointer<Simulation> sim = new Simulation();
 
 	//Parameters
-	ScopedPointer<AudioParameterFloat> volParam;
-	ScopedPointer<AudioParameterFloat> fuzzParam;
-	ScopedPointer<AudioParameterFloat> gainParam;
+	AudioParameterFloat* volParam, *fuzzParam, *gainParam;
 
 	//The actual values for the parameters
 	double volVal, fuzzVal, gainVal;
@@ -44,8 +42,9 @@ public:
 
 	//value for currentSampleRate
 	double currentSampleRate;
-
-
+	//parameter update coefficient
+	double paramCoeff;
+	
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;

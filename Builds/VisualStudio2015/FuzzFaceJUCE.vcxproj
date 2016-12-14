@@ -19,6 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,8 +42,10 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Fuzzed</TargetName>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath);F:\Users\the_m\Masters Project Docs\PluginCreation\Libraries\EigenLibraries</LibraryPath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fuzzed</TargetName>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(LibraryPath);F:\Users\the_m\Masters Project Docs\PluginCreation\Libraries\EigenLibraries</LibraryPath>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -56,9 +59,9 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Steinberg SDK\VST3 SDK;..\..\JuceLibraryCode;..\..\..\..\JUCE-grapefruit\JUCE\modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\..\..\JUCE-grapefruit\JUCE\modules;F:\Users\the_m\Masters Project Docs\PluginCreation\Libraries\EigenLibraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;JUCER_VS2015_78A5022=1;JUCE_APP_VERSION=1.0.0;JUCE_APP_VERSION_HEX=0x10000;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader/>
       <AssemblerListingLocation>$(IntDir)\</AssemblerListingLocation>
@@ -80,6 +83,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>F:\Users\the_m\Masters Project Docs\PluginCreation\Libraries\EigenLibraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Bscmake>
@@ -97,7 +101,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>C:\Steinberg SDK\VST3 SDK;..\..\JuceLibraryCode;..\..\..\..\JUCE-grapefruit\JUCE\modules;C:\Users\the_m\Desktop\Masters Project Docs\PluginCreation\Libraries\EigenLibraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\..\..\JUCE-grapefruit\JUCE\modules;F:\Users\the_m\Masters Project Docs\PluginCreation\Libraries\EigenLibraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;JUCER_VS2015_78A5022=1;JUCE_APP_VERSION=1.0.0;JUCE_APP_VERSION_HEX=0x10000;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -122,6 +126,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalLibraryDirectories>F:\Users\the_m\Masters Project Docs\PluginCreation\Libraries\EigenLibraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Bscmake>
@@ -135,6 +140,9 @@
     <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
     <ClCompile Include="..\..\Source\Circuit.cpp"/>
     <ClCompile Include="..\..\Source\Simulation.cpp"/>
+    <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -225,9 +233,6 @@
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\juce_audio_basics.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\audio_cd\juce_AudioCDReader.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\audio_io\juce_AudioDeviceManager.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -258,9 +263,6 @@
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\native\juce_linux_ALSA.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\native\juce_linux_AudioCDReader.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\native\juce_linux_JackAudio.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -274,12 +276,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\native\juce_win32_ASIO.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\native\juce_win32_AudioCDBurner.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\native\juce_win32_AudioCDReader.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\native\juce_win32_DirectSound.cpp">
@@ -609,9 +605,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VSTPluginFormat.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\processors\juce_AudioChannelSet.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\processors\juce_AudioProcessor.cpp">
@@ -1445,6 +1438,9 @@
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_ConcertinaPanel.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_FlexBox.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_GroupComponent.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1806,6 +1802,7 @@
     <ClInclude Include="..\..\Source\MyMatrixTypes.h"/>
     <ClInclude Include="..\..\Source\Simulation.h"/>
     <ClInclude Include="..\..\Source\ProjectSettings.h"/>
+    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\buffers\juce_AudioSampleBuffer.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\buffers\juce_FloatVectorOperations.h"/>
@@ -1843,8 +1840,6 @@
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\synthesisers\juce_Synthesiser.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\juce_audio_basics.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_basics\juce_audio_basics.h"/>
-    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\audio_cd\juce_AudioCDBurner.h"/>
-    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\audio_cd\juce_AudioCDReader.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\audio_io\juce_AudioDeviceManager.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\audio_io\juce_AudioIODevice.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_devices\audio_io\juce_AudioIODeviceType.h"/>
@@ -1994,7 +1989,6 @@
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\AU\CoreAudioUtilityClasses\CAXException.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\AU\CoreAudioUtilityClasses\ComponentBase.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\AU\CoreAudioUtilityClasses\MusicDeviceBase.h"/>
-    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\AU\juce_AU_Shared.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\RTAS\juce_RTAS_DigiCode_Header.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\Standalone\juce_StandaloneFilterWindow.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\utility\juce_CarbonVisibility.h"/>
@@ -2002,21 +1996,22 @@
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\utility\juce_FakeMouseMoveGenerator.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\utility\juce_IncludeModuleHeaders.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\utility\juce_IncludeSystemHeaders.h"/>
-    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\utility\juce_PluginBusUtilities.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\utility\juce_PluginHostType.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\utility\juce_WindowsHooks.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\juce_audio_plugin_client.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\juce_audio_plugin_client.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format\juce_AudioPluginFormat.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format\juce_AudioPluginFormatManager.h"/>
+    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_AU_Shared.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_AudioUnitPluginFormat.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_LADSPAPluginFormat.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VST3Common.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VST3Headers.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VST3PluginFormat.h"/>
+    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VSTCommon.h"/>
+    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VSTInterface.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VSTMidiEventList.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\format_types\juce_VSTPluginFormat.h"/>
-    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\processors\juce_AudioChannelSet.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\processors\juce_AudioPlayHead.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\processors\juce_AudioPluginInstance.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_processors\processors\juce_AudioProcessor.h"/>
@@ -2320,6 +2315,8 @@
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_ComponentBuilder.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_ComponentMovementWatcher.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_ConcertinaPanel.h"/>
+    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_FlexBox.h"/>
+    <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_FlexItem.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_GroupComponent.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_MultiDocumentPanel.h"/>
     <ClInclude Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_gui_basics\layout\juce_ResizableBorderComponent.h"/>
@@ -2460,6 +2457,7 @@
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_formats\codecs\flac\Flac Licence.txt"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_formats\codecs\oggvorbis\Ogg Vorbis Licence.txt"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\AU\AUResources.r"/>
+    <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\AUResources.r"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\juce_audio_plugin_client_AU.r"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_audio_plugin_client\juce_audio_plugin_client_RTAS.r"/>
     <None Include="..\..\..\..\JUCE-grapefruit\JUCE\modules\juce_graphics\image_formats\jpglib\changes to libjpeg for JUCE.txt"/>
