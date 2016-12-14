@@ -2,8 +2,6 @@
 
 
 //Default Constructor with default values for samplerate and vcc
-Simulation::Simulation() : Simulation(DEFAULT_SR, DEFAULT_VCC) {};
-
 
 //Constructor with Args, calls the superclass constructor with the same sampleRate
 Simulation::Simulation(double _sampleRate, double _vcc) : Circuit(_sampleRate)

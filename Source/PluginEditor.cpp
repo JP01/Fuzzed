@@ -90,6 +90,13 @@ FuzzFaceJuceAudioProcessorEditor::FuzzFaceJuceAudioProcessorEditor(FuzzFaceJuceA
 	fuzzLabel(String::empty, "Fuzz")
 	
 {
+	//Create a scoped pointer to the custom look and feel class used for custom UI
+	paramLookAndFeel = new MyLookAndFeel(PARAM_KNOB);
+	gainLookAndFeel = new MyLookAndFeel(GAIN_KNOB);
+	//Set up the requirements for the metering
+	meterLookAndFeel = new MyLookAndFeel(METER);
+	meterSlider = new Slider();
+
 	//Add the sliders to the editor
 	//Adds the input gain slider
 	addAndMakeVisible(gainSlider = new ParameterSlider(*p.gainParam));

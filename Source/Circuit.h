@@ -12,7 +12,7 @@ class Circuit
 public: //access control
 
 	//Default Constructor
-	Circuit();
+	//Circuit();
 
 	//Constructor with samplerate as an argument
 	Circuit(double _sampleRate);
@@ -91,11 +91,11 @@ protected:
 	double samplePeriod;
 
 	//PNP Bipolar Junction Transistor Values
-	static double forwardGain; //200 or 110
-	static double forwardGain2;
-	static double reverseGain;
-	static double thermalVoltage;
-	static double saturationCurrent;
+	double forwardGain; //200 or 110
+	double forwardGain2;
+	double reverseGain;
+	double thermalVoltage;
+	double saturationCurrent;
 
 	/*
 	*   Nonlinear function matrices, set as 4x4 matrices
@@ -117,24 +117,24 @@ private: //access control
 
 
 	 //potentiometer resistances
-	static double volPotRes;
-	static double fuzzPotRes;
+	double volPotRes;
+	double fuzzPotRes;
 	double volPotVar1, volPotVar2, fuzzPotVar1, fuzzPotVar2; //Variables for the potentiometer
 
 	//Resistors Values
-	static double r1;
-	static double r2 ;
-	static double r3;
-	static double r4;
-	static double r5;
-	static double r6;
-	static double r7;
-	static double r8;
+	double r1;
+	double r2 ;
+	double r3;
+	double r4;
+	double r5;
+	double r6;
+	double r7;
+	double r8;
 
 	//Capacitors Values
-	static double c1;
-	static double c2;
-	static double c3;
+	double c1;
+	double c2;
+	double c3;
 
 	//Initial setup functions
 	void setupCircuit();

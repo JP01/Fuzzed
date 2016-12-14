@@ -20,6 +20,14 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 		fuzzParam(nullptr),
 		gainParam(nullptr)
 {
+	//Instance of the simulation class, using scoped pointer to avoid memory leaking
+	sim = new Simulation(DEFAULT_SR, DEFAULT_VCC);
+
+	//Parameter smoothing
+	linFuzzSmoother = new LinearSmoothedValue<double>;
+	linVolSmoother = new LinearSmoothedValue<double>;
+	linGainSmoother = new LinearSmoothedValue<double>;
+
 	//Create the parameters 
 	addParameter(gainParam = new AudioParameterFloat("gain", "Gain", GAIN_MIN, GAIN_MAX, GAIN_DEFAULT));
 	addParameter(volParam = new AudioParameterFloat("vol", "Vol", CTRL_MIN, CTRL_MAX, VOL_DEFAULT));
@@ -42,6 +50,10 @@ FuzzFaceJuceAudioProcessor::FuzzFaceJuceAudioProcessor()
 
 	//update the param coeff
 	paramCoeff = exp(-2.0 * PI * (PARAM_CUTOFF / (currentSampleRate / UPDATE_PARAM_MAJOR)));
+
+	//Used to determine if the current sample is within the muted startup period 
+	sampleIndex = 0;
+
 }
 
 FuzzFaceJuceAudioProcessor::~FuzzFaceJuceAudioProcessor()

@@ -27,7 +27,7 @@ public:
 
 	//==============================================================================
 	//Instance of the simulation class, using scoped pointer to avoid memory leaking
-	ScopedPointer<Simulation> sim = new Simulation();
+	ScopedPointer<Simulation> sim;
 
 	//Parameters
 	AudioParameterFloat* volParam, *fuzzParam, *gainParam;
@@ -36,9 +36,9 @@ public:
 	double volVal, fuzzVal, gainVal;
 
 	//Parameter smoothing
-	ScopedPointer<LinearSmoothedValue<double>> linFuzzSmoother = new LinearSmoothedValue<double>;
-	ScopedPointer<LinearSmoothedValue<double>> linVolSmoother = new LinearSmoothedValue<double>;
-	ScopedPointer<LinearSmoothedValue<double>> linGainSmoother = new LinearSmoothedValue<double>;
+	ScopedPointer<LinearSmoothedValue<double>> linFuzzSmoother;
+	ScopedPointer<LinearSmoothedValue<double>> linVolSmoother;
+	ScopedPointer<LinearSmoothedValue<double>> linGainSmoother;
 
 	//value for currentSampleRate
 	double currentSampleRate;
@@ -92,7 +92,7 @@ private:
 	void inputScaling(float* _channelData);
 
 	//Used to determine if the current sample is within the muted startup period 
-	int sampleIndex = 0;
+	int sampleIndex;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FuzzFaceJuceAudioProcessor)

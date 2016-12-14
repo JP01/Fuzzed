@@ -10,7 +10,7 @@ class Simulation : public Circuit
 {
 public:
 	//Default Constructor
-	Simulation();
+	//Simulation();
 
 	//Constructor with samplerate and vcc as arguement
 	Simulation(double _sampleRate, double _vcc);
@@ -47,21 +47,21 @@ private:
 
 	/* Input */
 	//VCC voltage
-	static double vcc; //steady state voltage
-	static double durfade; //duration of the faded power up
+	double vcc; //steady state voltage
+	double durfade; //duration of the faded power up
 	int hanWin; //length in samples of the hanning window for voltage ramping, used in the get steady state phase
-	static double steadyStatePeriodFactor; //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
+	double steadyStatePeriodFactor; //Factor which controls the size of the window window used to reach steady state (where window size in samples = hanWin*steadyStateFactor)
 
 	Eigen::VectorXd win; //hanning window
 	Eigen::VectorXd vccv; //power up voltage used in initial setup
 
-	static double maxIterations;
-	static double maxSubIterations;
+	double maxIterations;
+	double maxSubIterations;
 
 	//Specified tolerance in nonlinear voltage vd
-	static double tol;
+	double tol;
 	//tol^2, used for end conditions of the NR solver
-	static double tols;
+	double tols;
 
 
 	/*Simulation Preparations*/

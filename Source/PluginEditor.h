@@ -35,15 +35,15 @@ private:
 
 
 	//Create a scoped pointer to the custom look and feel class used for custom UI
-	ScopedPointer<MyLookAndFeel> paramLookAndFeel = new MyLookAndFeel(PARAM_KNOB);
-	ScopedPointer<MyLookAndFeel> gainLookAndFeel = new MyLookAndFeel(GAIN_KNOB);
+	ScopedPointer<MyLookAndFeel> paramLookAndFeel;
+	ScopedPointer<MyLookAndFeel> gainLookAndFeel;
 
 	//Creates pointers for volSlider and fuzzSlider which are automatically deleted once out of scope + gainSlider
 	ScopedPointer<ParameterSlider> volSlider, fuzzSlider, gainSlider; 
 	
 	//Set up the requirements for the metering
-	ScopedPointer<MyLookAndFeel> meterLookAndFeel = new MyLookAndFeel(METER);
-	ScopedPointer<Slider> meterSlider = new Slider();
+	ScopedPointer<MyLookAndFeel> meterLookAndFeel;
+	ScopedPointer<Slider> meterSlider;
 	double readingSmooth; //smoothed reading value
 	double smoothingCoeff; //the smoothing coefficient used for parameter smoothing of the VU meter
 

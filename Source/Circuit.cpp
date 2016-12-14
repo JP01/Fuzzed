@@ -4,7 +4,6 @@
 //Circuit::Circuit() { std::cout << "Circuit Created!" << std::endl; };
 
 /*Calls the default constructor with default 44.1k Hz sample rate */
-Circuit::Circuit() : Circuit(DEFAULT_SR) {};
 
 
 /*Constructor which takes sampleRate as an arguement and initialises the sampling period to 1./sampleRate */

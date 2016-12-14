@@ -1,71 +1,20 @@
-﻿  MyLookAndFeel.cpp
-  PluginProcessor.cpp
-  PluginEditor.cpp
-  Circuit.cpp
-..\..\Source\Circuit.cpp(7): error C2614: 'Circuit' : illegal member initialization: 'Circuit' is not a base or member
-..\..\Source\MyLookAndFeel.cpp(5): error C2614: 'MyLookAndFeel' : illegal member initialization: 'MyLookAndFeel' is not a base or member
-  Simulation.cpp
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(30): error C2864: 'FuzzFaceJuceAudioProcessor::sim' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(42): error C2864: 'FuzzFaceJuceAudioProcessor::linFuzzSmoother' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(43): error C2864: 'FuzzFaceJuceAudioProcessor::linVolSmoother' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(44): error C2864: 'FuzzFaceJuceAudioProcessor::linGainSmoother' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(98): error C2864: 'FuzzFaceJuceAudioProcessor::sampleIndex' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(38): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginEditor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(38): error C2864: 'FuzzFaceJuceAudioProcessorEditor::paramLookAndFeel' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(39): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginEditor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(39): error C2864: 'FuzzFaceJuceAudioProcessorEditor::gainLookAndFeel' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(45): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginEditor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(45): error C2864: 'FuzzFaceJuceAudioProcessorEditor::meterLookAndFeel' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(46): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginEditor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(46): error C2864: 'FuzzFaceJuceAudioProcessorEditor::meterSlider' : only static const integral data members can be initialized within a class (..\..\Source\PluginEditor.cpp)
-..\..\Source\PluginEditor.cpp(101): warning C4244: 'argument' : conversion from 'const double' to 'int', possible loss of data
-..\..\Source\PluginEditor.cpp(112): warning C4244: 'argument' : conversion from 'const double' to 'int', possible loss of data
-..\..\Source\PluginEditor.cpp(128): warning C4244: 'argument' : conversion from 'const double' to 'int', possible loss of data
-..\..\Source\PluginEditor.cpp(214): warning C4244: 'argument' : conversion from 'const float' to 'int', possible loss of data
-..\..\Source\PluginEditor.cpp(215): warning C4244: 'argument' : conversion from 'const float' to 'int', possible loss of data
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(30): error C2864: 'FuzzFaceJuceAudioProcessor::sim' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(42): error C2864: 'FuzzFaceJuceAudioProcessor::linFuzzSmoother' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(43): error C2864: 'FuzzFaceJuceAudioProcessor::linVolSmoother' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(44): error C2864: 'FuzzFaceJuceAudioProcessor::linGainSmoother' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginProcessor.h(98): error C2864: 'FuzzFaceJuceAudioProcessor::sampleIndex' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(38): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginProcessor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(38): error C2864: 'FuzzFaceJuceAudioProcessorEditor::paramLookAndFeel' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(39): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginProcessor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(39): error C2864: 'FuzzFaceJuceAudioProcessorEditor::gainLookAndFeel' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(45): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginProcessor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(45): error C2864: 'FuzzFaceJuceAudioProcessorEditor::meterLookAndFeel' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(46): warning C4291: 'void *operator new(size_t)' : no matching operator delete found; memory will not be freed if initialization throws an exception (..\..\Source\PluginProcessor.cpp)
-          predefined C++ types (compiler internal)(23) : see declaration of 'operator new'
-f:\users\the_m\masters project docs\plugincreation\juce projects\fuzzfacejuce\source\PluginEditor.h(46): error C2864: 'FuzzFaceJuceAudioProcessorEditor::meterSlider' : only static const integral data members can be initialized within a class (..\..\Source\PluginProcessor.cpp)
-..\..\Source\PluginProcessor.cpp(24): warning C4244: 'argument' : conversion from 'const double' to 'float', possible loss of data
-..\..\Source\PluginProcessor.cpp(25): warning C4244: 'argument' : conversion from 'const double' to 'float', possible loss of data
-..\..\Source\PluginProcessor.cpp(26): warning C4244: 'argument' : conversion from 'const double' to 'float', possible loss of data
-..\..\Source\PluginProcessor.cpp(210): warning C4244: '*=' : conversion from 'double' to 'float', possible loss of data
-..\..\Source\PluginProcessor.cpp(222): warning C4244: '*=' : conversion from 'const double' to 'float', possible loss of data
-..\..\Source\PluginProcessor.cpp(242): warning C4244: '*=' : conversion from 'const double' to 'float', possible loss of data
-..\..\Source\PluginProcessor.cpp(247): warning C4244: '=' : conversion from 'const double' to 'float', possible loss of data
-..\..\Source\PluginProcessor.cpp(250): warning C4244: '=' : conversion from 'const double' to 'float', possible loss of data
-  juce_audio_basics.cpp
-  juce_audio_devices.cpp
-..\..\Source\Simulation.cpp(5): error C2614: 'Simulation' : illegal member initialization: 'Simulation' is not a base or member
-..\..\Source\Simulation.cpp(189): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-  juce_audio_formats.cpp
-  juce_audio_plugin_client_utils.cpp
-  juce_audio_plugin_client_VST2.cpp
-  juce_audio_processors.cpp
-  juce_core.cpp
-  juce_cryptography.cpp
-  juce_data_structures.cpp
-  juce_events.cpp
-  juce_graphics.cpp
-  juce_gui_basics.cpp
-  juce_gui_extra.cpp
-  juce_opengl.cpp
-  juce_video.cpp
+﻿  PluginProcessor.cpp
+..\..\Source\PluginProcessor.cpp(32): warning C4244: 'argument' : conversion from 'const double' to 'float', possible loss of data
+..\..\Source\PluginProcessor.cpp(33): warning C4244: 'argument' : conversion from 'const double' to 'float', possible loss of data
+..\..\Source\PluginProcessor.cpp(34): warning C4244: 'argument' : conversion from 'const double' to 'float', possible loss of data
+..\..\Source\PluginProcessor.cpp(103): warning C4100: 'index' : unreferenced formal parameter
+..\..\Source\PluginProcessor.cpp(107): warning C4100: 'index' : unreferenced formal parameter
+..\..\Source\PluginProcessor.cpp(112): warning C4100: 'newName' : unreferenced formal parameter
+..\..\Source\PluginProcessor.cpp(112): warning C4100: 'index' : unreferenced formal parameter
+..\..\Source\PluginProcessor.cpp(117): warning C4100: 'samplesPerBlock' : unreferenced formal parameter
+..\..\Source\PluginProcessor.cpp(117): warning C4100: 'sampleRate' : unreferenced formal parameter
+..\..\Source\PluginProcessor.cpp(218): warning C4244: '*=' : conversion from 'double' to 'float', possible loss of data
+..\..\Source\PluginProcessor.cpp(230): warning C4244: '*=' : conversion from 'const double' to 'float', possible loss of data
+..\..\Source\PluginProcessor.cpp(153): warning C4100: 'midiMessages' : unreferenced formal parameter
+..\..\Source\PluginProcessor.cpp(248): warning C4244: '*=' : conversion from 'const double' to 'float', possible loss of data
+..\..\Source\PluginProcessor.cpp(253): warning C4244: '=' : conversion from 'const double' to 'float', possible loss of data
+..\..\Source\PluginProcessor.cpp(256): warning C4244: '=' : conversion from 'const double' to 'float', possible loss of data
+     Creating library F:\Users\the_m\Masters Project Docs\PluginCreation\JUCE Projects\FuzzFaceJUCE\Builds\VisualStudio2012\Release\Fuzzed.lib and object F:\Users\the_m\Masters Project Docs\PluginCreation\JUCE Projects\FuzzFaceJUCE\Builds\VisualStudio2012\Release\Fuzzed.exp
+  Generating code
+  Finished generating code
+  FuzzFaceJUCE.vcxproj -> F:\Users\the_m\Masters Project Docs\PluginCreation\JUCE Projects\FuzzFaceJUCE\Builds\VisualStudio2012\Release\Fuzzed.dll
