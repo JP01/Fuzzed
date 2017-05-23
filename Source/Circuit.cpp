@@ -25,10 +25,10 @@ Circuit::Circuit(double _sampleRate) :samplePeriod(1. / _sampleRate) {
 void Circuit::initialiseValues() {
 	//BJT Values
 	forwardGain = 70;
-	forwardGain2 = 110;
-	reverseGain = 2;
+	forwardGain2 = 103.52;         //originally 110
+	reverseGain = 9.98;            //originally 2.0
 	thermalVoltage = 25.8e-3;
-	saturationCurrent = 1e-14;
+	saturationCurrent = 1.9767e-5; //originally 1e-14
 
 	//Potentiometer base resistances
 	volPotRes = 500e3;

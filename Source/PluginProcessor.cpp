@@ -197,7 +197,6 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 				fuzzVal = (*fuzzParam)*(1.0 - paramCoeff) + fuzzVal*paramCoeff;
 				volVal = (*volParam)*(1.0 - paramCoeff) + volVal*paramCoeff;
 				//Refresh the sim with new parameter values
-				
 				sim->setParams(fuzzVal, volVal);
 			}	
 		}
@@ -238,6 +237,11 @@ void FuzzFaceJuceAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuf
 		//Make both channels produce same output: ie convert back to "stereo"
 		*channelDataR = *channelData;
 	}
+
+
+
+
+
 }
 
 //===========================================================================================
