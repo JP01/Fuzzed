@@ -10,3 +10,4 @@ The examples show case the guitar tones produced, with an additional example sho
 Use of Fuzzed as a return effect can add beautiful analogue distortion to your sounds without losing the original tonal content.
 
 
+![Alt text](http://static.kvraudio.com/i/b/plugingui.png)
