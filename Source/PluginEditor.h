@@ -1,10 +1,6 @@
 /*
   ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin editor.
-
+  This class describes the GUI of Fuzzed.
   ==============================================================================
 */
 
